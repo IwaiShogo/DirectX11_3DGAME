@@ -1,0 +1,255 @@
+{
+    "Entities": [
+        {
+            "Collider": {
+                "Enabled": true,
+                "boxSize": [
+                    1.2300000190734863,
+                    1.0,
+                    1.0
+                ],
+                "height": 1.0,
+                "isTrigger": false,
+                "layer": 1,
+                "offset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "radius": 0.5,
+                "type": 0
+            },
+            "ID": 2,
+            "IsActive": true,
+            "Rigidbody": {
+                "Enabled": true,
+                "drag": 0.10000000149011612,
+                "mass": 1.0,
+                "type": 0,
+                "useGravity": true
+            },
+            "Tag": {
+                "Enabled": true,
+                "componentOrder": [
+                    "Tag",
+                    "Transform",
+                    "Rigidbody",
+                    "Collider"
+                ],
+                "name": "GameObject"
+            },
+            "Transform": {
+                "Enabled": true,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    8.396818161010742,
+                    1.0,
+                    8.745420455932617
+                ]
+            }
+        },
+        {
+            "Canvas": {
+                "Enabled": true,
+                "isScreenSpace": true,
+                "referenceSize": [
+                    1920.0,
+                    1080.0
+                ]
+            },
+            "ID": 3,
+            "IsActive": true,
+            "PrefabInstance": {
+                "Enabled": true,
+                "prefabPath": "Resources/Game/Prefabs/Canvas.json"
+            },
+            "Relationship": {
+                "Enabled": true,
+                "children": [
+                    4
+                ],
+                "parent": 4294967295
+            },
+            "Tag": {
+                "Enabled": true,
+                "componentOrder": [
+                    "Tag",
+                    "Transform2D",
+                    "Canvas",
+                    "Relationship",
+                    "PrefabInstance"
+                ],
+                "name": "Canvas"
+            },
+            "Transform2D": {
+                "Enabled": true,
+                "anchorMax": [
+                    0.5,
+                    0.5
+                ],
+                "anchorMin": [
+                    0.5,
+                    0.5
+                ],
+                "pivot": [
+                    0.5,
+                    0.5
+                ],
+                "position": [
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "size": [
+                    100.0,
+                    100.0
+                ]
+            }
+        },
+        {
+            "ID": 4,
+            "IsActive": true,
+            "Relationship": {
+                "Enabled": true,
+                "children": [],
+                "parent": 3
+            },
+            "Tag": {
+                "Enabled": true,
+                "componentOrder": [
+                    "Tag",
+                    "Transform2D",
+                    "TextComponent",
+                    "Relationship"
+                ],
+                "name": "Text"
+            },
+            "TextComponent": {
+                "Enabled": true,
+                "centerAlign": true,
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "fontKey": "Reggae One",
+                "fontSize": 100.0,
+                "isBold": false,
+                "isItalic": false,
+                "offset": [
+                    0.0,
+                    0.0
+                ],
+                "text": "Game Scene"
+            },
+            "Transform2D": {
+                "Enabled": true,
+                "anchorMax": [
+                    0.5,
+                    0.5
+                ],
+                "anchorMin": [
+                    0.5,
+                    0.5
+                ],
+                "pivot": [
+                    0.5,
+                    0.5
+                ],
+                "position": [
+                    -294.84442138671875,
+                    297.8502502441406
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "size": [
+                    100.0,
+                    100.0
+                ]
+            }
+        }
+    ],
+    "Physics": {
+        "LayerCollision": []
+    },
+    "SceneName": "Untitled Scene",
+    "Systems": [
+        {
+            "Group": 1,
+            "Name": "Physics System"
+        },
+        {
+            "Group": 1,
+            "Name": "Collision System"
+        },
+        {
+            "Group": 0,
+            "Name": "UI System"
+        },
+        {
+            "Group": 1,
+            "Name": "Lifetime System"
+        },
+        {
+            "Group": 0,
+            "Name": "Hierarchy System"
+        },
+        {
+            "Group": 1,
+            "Name": "Animation System"
+        },
+        {
+            "Group": 0,
+            "Name": "Render System"
+        },
+        {
+            "Group": 0,
+            "Name": "Model Render System"
+        },
+        {
+            "Group": 0,
+            "Name": "Billboard System"
+        },
+        {
+            "Group": 0,
+            "Name": "Sprite Render System"
+        },
+        {
+            "Group": 0,
+            "Name": "Text Render System"
+        },
+        {
+            "Group": 0,
+            "Name": "Audio System"
+        },
+        {
+            "Group": 1,
+            "Name": "PlayerMoveSystem"
+        }
+    ]
+}

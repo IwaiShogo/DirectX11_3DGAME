@@ -1,0 +1,643 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Library">
+      <UniqueIdentifier>{0b00269c-d66b-4513-bbee-2bfe86123527}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{370486db-fab7-4741-a89b-7be6f958de11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Editor">
+      <UniqueIdentifier>{38d92708-6605-4a6d-8edd-bebab77ee9ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine">
+      <UniqueIdentifier>{a2fcf305-0919-411b-a8af-4d36fb391193}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Editor\Core">
+      <UniqueIdentifier>{2aa7c316-c9ed-4454-b45a-198ee53fc896}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Editor\Panels">
+      <UniqueIdentifier>{78b878df-b99b-4286-b024-f3a84cdd7848}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Editor\Tools">
+      <UniqueIdentifier>{e0e94256-f129-4653-831c-25d02ed4399f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Audio">
+      <UniqueIdentifier>{2cc18db6-03b6-4311-8261-73f4ff8e3c51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Core">
+      <UniqueIdentifier>{16d78f7d-8d88-4549-bf88-8b7c7bf66b5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Physics">
+      <UniqueIdentifier>{e0a652dc-c034-4be7-9aca-138c910a431f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Renderer">
+      <UniqueIdentifier>{be609034-165b-4fa9-b0be-81c8e2dbdc1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Resource">
+      <UniqueIdentifier>{8cff3c4e-b7b5-4ff1-b38b-7f9e9c00b1b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Scene">
+      <UniqueIdentifier>{e0709f29-7ccf-4d11-aa22-e74a131e1676}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Scene\Components">
+      <UniqueIdentifier>{4c119b58-09c3-49e5-9309-3021b4ea7568}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Renderer\Renderers">
+      <UniqueIdentifier>{6b15aa1d-209f-4d3f-b79c-58d202dde461}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Renderer\Text">
+      <UniqueIdentifier>{f922e9e2-cbca-44aa-b13c-10b099bcf510}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Renderer\Core">
+      <UniqueIdentifier>{5f7b0680-183e-46c7-a42b-f39bc914682a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library\ImGui">
+      <UniqueIdentifier>{d69de4bd-7c40-42bf-af97-4208f49aeb61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library\nlohmann">
+      <UniqueIdentifier>{6e355443-3ca4-4e7a-8bf4-91d07ca0cf5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library\DirectXTex">
+      <UniqueIdentifier>{cb869771-5322-4066-8477-87cec07827f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Core\Base">
+      <UniqueIdentifier>{8afe79f0-2150-40b7-aabb-04793004fe06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Core\Math">
+      <UniqueIdentifier>{7f8144e7-3e05-4e92-b544-a2a11539caba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Core\Time">
+      <UniqueIdentifier>{b54965df-aafa-4afc-8a37-8ca1116de13a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Core\Window">
+      <UniqueIdentifier>{e8fe3e3a-0f30-405b-a4a1-8aace98e33f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Physics\Core">
+      <UniqueIdentifier>{943d52ca-ece9-4940-bd2c-77a788b391c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Platform">
+      <UniqueIdentifier>{cd43350b-b967-44eb-aa31-cd73de14dc16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Renderer\Data">
+      <UniqueIdentifier>{86ae99dd-96b3-4ed4-92b9-5f4399dca276}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Renderer\RHI">
+      <UniqueIdentifier>{db8849bf-6288-44c9-80d7-f9f6bb7c5a76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Scene\Core">
+      <UniqueIdentifier>{25642025-39d5-4e79-9300-a271d938b933}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Scene\Core\ECS">
+      <UniqueIdentifier>{7a6ec533-613e-4881-bad3-e067b6e596ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Scene\Serializer">
+      <UniqueIdentifier>{5047a7aa-270f-45f9-a6f8-491ef78f1899}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Scene\Systems">
+      <UniqueIdentifier>{2dd2bc1d-5a0e-4e99-aab5-ae6582b566a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Scene\Systems\Audio">
+      <UniqueIdentifier>{4bfe691f-6889-4f36-b4e1-89bf23b9d15e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Scene\Systems\Graphics">
+      <UniqueIdentifier>{744d87ab-b42d-4e6a-aa09-2d73e699ef8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Scene\Systems\Logic">
+      <UniqueIdentifier>{e23aa26b-2a84-40ea-abbe-ce9a251d75bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Scene\Systems\Physics">
+      <UniqueIdentifier>{07806c4d-9ccf-47c7-a227-c468c36b115f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts">
+      <UniqueIdentifier>{2224f43a-d908-4c7e-a3e3-f0f9efd4c6a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Core\Graphics">
+      <UniqueIdentifier>{06f9941d-e973-4acc-9dba-aaabaffd40db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Scene\Systems\Animation">
+      <UniqueIdentifier>{20d7707c-685a-458d-ac4a-d844f3baa6cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{0e55fee7-153f-4fd8-b6bb-7a07bd7de050}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Shaders">
+      <UniqueIdentifier>{91f3bfef-8122-45cd-89dc-c0038cd1ad39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\DebugMeshes">
+      <UniqueIdentifier>{c9611005-b6ac-4fec-9c7e-5437819840da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Scene\Animation">
+      <UniqueIdentifier>{44b761df-2510-45e1-b793-23598cf1a1be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library\ImNodes">
+      <UniqueIdentifier>{a10edd4f-ebb2-4f36-a5f4-c4929eec5197}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Source\Editor\Core\Editor.cpp">
+      <Filter>Source\Editor\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Audio\AudioManager.cpp">
+      <Filter>Source\Engine\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Core\Application.cpp">
+      <Filter>Source\Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Renderer\Core\RenderTarget.cpp">
+      <Filter>Source\Engine\Renderer\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Renderer\Renderers\BillboardRenderer.cpp">
+      <Filter>Source\Engine\Renderer\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Renderer\Renderers\ModelRenderer.cpp">
+      <Filter>Source\Engine\Renderer\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Renderer\Renderers\PrimitiveRenderer.cpp">
+      <Filter>Source\Engine\Renderer\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Renderer\Renderers\SpriteRenderer.cpp">
+      <Filter>Source\Engine\Renderer\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Renderer\Text\FontManager.cpp">
+      <Filter>Source\Engine\Renderer\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Renderer\Text\TextRenderer.cpp">
+      <Filter>Source\Engine\Renderer\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Resource\ResourceManager.cpp">
+      <Filter>Source\Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\pch.cpp">
+      <Filter>Source\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\ImGui\imgui.cpp">
+      <Filter>Library\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\ImGui\ImGuizmo.cpp">
+      <Filter>Library\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\ImGui\imgui_demo.cpp">
+      <Filter>Library\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\ImGui\imgui_draw.cpp">
+      <Filter>Library\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\ImGui\imgui_impl_dx11.cpp">
+      <Filter>Library\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\ImGui\imgui_impl_win32.cpp">
+      <Filter>Library\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\ImGui\imgui_tables.cpp">
+      <Filter>Library\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\ImGui\imgui_widgets.cpp">
+      <Filter>Library\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Core\Window\Input.cpp">
+      <Filter>Source\Engine\Core\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Scene\Core\SceneManager.cpp">
+      <Filter>Source\Engine\Scene\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Scene\Systems\Graphics\RenderSystem.cpp">
+      <Filter>Source\Engine\Scene\Systems\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Scene\Systems\Physics\CollisionSystem.cpp">
+      <Filter>Source\Engine\Scene\Systems\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Scene\Systems\Physics\PhysicsSystem.cpp">
+      <Filter>Source\Engine\Scene\Systems\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Scene\Core\ECS\ECS.cpp">
+      <Filter>Source\Engine\Scene\Core\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\DirectXTex\DirectXTexHDR.cpp">
+      <Filter>Library\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\DirectXTex\DirectXTexImage.cpp">
+      <Filter>Library\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\DirectXTex\DirectXTexMipmaps.cpp">
+      <Filter>Library\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\DirectXTex\DirectXTexMisc.cpp">
+      <Filter>Library\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\DirectXTex\DirectXTexNormalMaps.cpp">
+      <Filter>Library\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\DirectXTex\DirectXTexPMAlpha.cpp">
+      <Filter>Library\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\DirectXTex\DirectXTexResize.cpp">
+      <Filter>Library\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\DirectXTex\DirectXTexTGA.cpp">
+      <Filter>Library\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\DirectXTex\DirectXTexUtil.cpp">
+      <Filter>Library\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\DirectXTex\DirectXTexWIC.cpp">
+      <Filter>Library\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\DirectXTex\BC.cpp">
+      <Filter>Library\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\DirectXTex\BC4BC5.cpp">
+      <Filter>Library\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\DirectXTex\BC6HBC7.cpp">
+      <Filter>Library\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\DirectXTex\DirectXTexCompress.cpp">
+      <Filter>Library\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\DirectXTex\DirectXTexConvert.cpp">
+      <Filter>Library\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\DirectXTex\DirectXTexD3D11.cpp">
+      <Filter>Library\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\DirectXTex\DirectXTexDDS.cpp">
+      <Filter>Library\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\DirectXTex\DirectXTexFlipRotate.cpp">
+      <Filter>Library\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Scene\Serializer\SystemRegistry.cpp">
+      <Filter>Source\Engine\Scene\Serializer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Scene\Serializer\ComponentRegistry.cpp">
+      <Filter>Source\Engine\Scene\Serializer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Core\Time\Time.cpp">
+      <Filter>Source\Engine\Core\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Scene\Serializer\SceneSerializer.cpp">
+      <Filter>Source\Engine\Scene\Serializer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Core\Graphics\Graphics.cpp">
+      <Filter>Source\Engine\Core\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Editor\Panels\SceneViewPanel.cpp">
+      <Filter>Source\Editor\Panels</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Renderer\Data\Model.cpp">
+      <Filter>Source\Engine\Renderer\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Renderer\RHI\MeshBuffer.cpp">
+      <Filter>Source\Engine\Renderer\RHI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\ImNodes\imnodes.cpp">
+      <Filter>Library\ImNodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Renderer\RHI\Texture.cpp">
+      <Filter>Source\Engine\Renderer\RHI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Audio\Sound.cpp">
+      <Filter>Source\Engine\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Renderer\Renderers\GridRenderer.cpp">
+      <Filter>Source\Engine\Renderer\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Renderer\Renderers\SkyboxRenderer.cpp" />
+    <ClCompile Include="..\Source\Engine\Renderer\Core\ShadowMap.cpp" />
+    <ClCompile Include="..\Source\Engine\Renderer\Renderers\ShadowRenderer.cpp">
+      <Filter>Source\Engine\Renderer\Renderers</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Source\Editor\Core\Editor.h">
+      <Filter>Source\Editor\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\Core\GameCommands.h">
+      <Filter>Source\Editor\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\Core\InspectorGui.h">
+      <Filter>Source\Editor\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\Tools\GizmoSystem.h">
+      <Filter>Source\Editor\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\Tools\ThumbnailCache.h">
+      <Filter>Source\Editor\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Audio\AudioManager.h">
+      <Filter>Source\Engine\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Audio\Sound.h">
+      <Filter>Source\Engine\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Core\Application.h">
+      <Filter>Source\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Core\Context.h">
+      <Filter>Source\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Renderer\Core\RenderTarget.h">
+      <Filter>Source\Engine\Renderer\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Renderer\Renderers\BillboardRenderer.h">
+      <Filter>Source\Engine\Renderer\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Renderer\Renderers\ModelRenderer.h">
+      <Filter>Source\Engine\Renderer\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Renderer\Renderers\PrimitiveRenderer.h">
+      <Filter>Source\Engine\Renderer\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Renderer\Renderers\SpriteRenderer.h">
+      <Filter>Source\Engine\Renderer\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Renderer\Text\FontManager.h">
+      <Filter>Source\Engine\Renderer\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Renderer\Text\PrivateFontLoader.h">
+      <Filter>Source\Engine\Renderer\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Renderer\Text\TextRenderer.h">
+      <Filter>Source\Engine\Renderer\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Resource\Prefab.h">
+      <Filter>Source\Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Resource\ResourceManager.h">
+      <Filter>Source\Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\Components\Components.h">
+      <Filter>Source\Engine\Scene\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Config.h">
+      <Filter>Source\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\pch.h">
+      <Filter>Source\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\ImGui\imconfig.h">
+      <Filter>Library\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\ImGui\imgui.h">
+      <Filter>Library\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\ImGui\ImGuizmo.h">
+      <Filter>Library\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\ImGui\imgui_impl_dx11.h">
+      <Filter>Library\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\ImGui\imgui_impl_win32.h">
+      <Filter>Library\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\ImGui\imgui_internal.h">
+      <Filter>Library\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\ImGui\imstb_rectpack.h">
+      <Filter>Library\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\ImGui\imstb_textedit.h">
+      <Filter>Library\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\ImGui\imstb_truetype.h">
+      <Filter>Library\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\nlohmann\json.hpp">
+      <Filter>Library\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\Panels\ContentBrowser.h">
+      <Filter>Source\Editor\Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\Panels\HierarchyWindow.h">
+      <Filter>Source\Editor\Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\Panels\InspectorWindow.h">
+      <Filter>Source\Editor\Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Core\Base\Logger.h">
+      <Filter>Source\Engine\Core\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Core\Base\Reflection.h">
+      <Filter>Source\Engine\Core\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Core\Base\StringId.h">
+      <Filter>Source\Engine\Core\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Core\Window\Input.h">
+      <Filter>Source\Engine\Core\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Core\Time\Time.h">
+      <Filter>Source\Engine\Core\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Physics\PhysicsEvents.h">
+      <Filter>Source\Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Physics\SpatialHash.h">
+      <Filter>Source\Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Renderer\Data\Model.h">
+      <Filter>Source\Engine\Renderer\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Renderer\RHI\Texture.h">
+      <Filter>Source\Engine\Renderer\RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\Core\SceneManager.h">
+      <Filter>Source\Engine\Scene\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\Core\ECS\ECS.h">
+      <Filter>Source\Engine\Scene\Core\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\Serializer\ComponentSerializer.h">
+      <Filter>Source\Engine\Scene\Serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\Serializer\SceneSerializer.h">
+      <Filter>Source\Engine\Scene\Serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\Systems\Audio\AudioSystem.h">
+      <Filter>Source\Engine\Scene\Systems\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\Systems\Graphics\BillboardSystem.h">
+      <Filter>Source\Engine\Scene\Systems\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\Systems\Graphics\ModelRenderSystem.h">
+      <Filter>Source\Engine\Scene\Systems\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\Systems\Graphics\RenderSystem.h">
+      <Filter>Source\Engine\Scene\Systems\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\Systems\Graphics\SpriteRenderSystem.h">
+      <Filter>Source\Engine\Scene\Systems\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\Systems\Graphics\TextRenderSystem.h">
+      <Filter>Source\Engine\Scene\Systems\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\Systems\Logic\HierarchySystem.h">
+      <Filter>Source\Engine\Scene\Systems\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\Systems\Logic\LifetimeSystem.h">
+      <Filter>Source\Engine\Scene\Systems\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\Systems\Logic\UISystem.h">
+      <Filter>Source\Engine\Scene\Systems\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\Systems\Physics\CollisionSystem.h">
+      <Filter>Source\Engine\Scene\Systems\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\Systems\Physics\PhysicsSystem.h">
+      <Filter>Source\Engine\Scene\Systems\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\Panels\SceneViewPanel.h">
+      <Filter>Source\Editor\Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\Panels\GameViewPanel.h">
+      <Filter>Source\Editor\Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\Tools\EditorCamera.h">
+      <Filter>Source\Editor\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\Serializer\SystemRegistry.h">
+      <Filter>Source\Engine\Scene\Serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\Serializer\ComponentRegistry.h">
+      <Filter>Source\Engine\Scene\Serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\Components\UIComponents.h">
+      <Filter>Source\Engine\Scene\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\Systems\Logic\ButtonSystem.h">
+      <Filter>Source\Engine\Scene\Systems\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\Components\ComponentDefines.h">
+      <Filter>Source\Engine\Scene\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\Core\CommandHistory.h">
+      <Filter>Source\Editor\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\Core\EditorCommands.h">
+      <Filter>Source\Editor\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\Panels\PhysicsSettingsWindow.h">
+      <Filter>Source\Editor\Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Core\Core.h">
+      <Filter>Source\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\DirectXTex\DirectXTexP.h">
+      <Filter>Library\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\DirectXTex\filters.h">
+      <Filter>Library\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\DirectXTex\scoped.h">
+      <Filter>Library\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\DirectXTex\BC.h">
+      <Filter>Library\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\DirectXTex\BCDirectCompute.h">
+      <Filter>Library\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\DirectXTex\DDS.h">
+      <Filter>Library\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\DirectXTex\DirectXTex.h">
+      <Filter>Library\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\Core\SceneTransition.h">
+      <Filter>Source\Engine\Scene\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\Panels\ResourceInspectorWindow.h">
+      <Filter>Source\Editor\Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\Core\EditorPrefs.h">
+      <Filter>Source\Editor\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\Panels\SystemMonitorWindow.h">
+      <Filter>Source\Editor\Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\Panels\GameControlWindow.h">
+      <Filter>Source\Editor\Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\Panels\InputVisualizerWindow.h">
+      <Filter>Source\Editor\Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Core\Graphics\Graphics.h">
+      <Filter>Source\Engine\Core\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\Tools\ThumbnailGenerator.h">
+      <Filter>Source\Editor\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\Panels\BuildSettingsWindow.h">
+      <Filter>Source\Editor\Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Renderer\RHI\MeshBuffer.h">
+      <Filter>Source\Engine\Renderer\RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\Systems\Animation\AnimationSystem.h">
+      <Filter>Source\Engine\Scene\Systems\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\Animation\AnimatorController.h">
+      <Filter>Source\Engine\Scene\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\Panels\AnimatorGraphWindow.h">
+      <Filter>Source\Editor\Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\ImNodes\imnodes.h">
+      <Filter>Library\ImNodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\ImNodes\imnodes_internal.h">
+      <Filter>Library\ImNodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\Serializer\AnimatorControllerSerializer.h">
+      <Filter>Source\Engine\Scene\Serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Renderer\Renderers\GridRenderer.h">
+      <Filter>Source\Engine\Renderer\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Renderer\Renderers\SkyboxRenderer.h">
+      <Filter>Source\Engine\Renderer\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Scene\SceneEnvironment.h">
+      <Filter>Source\Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\Panels\LightingSettingsWindow.h">
+      <Filter>Source\Editor\Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Renderer\Core\ShadowMap.h">
+      <Filter>Source\Engine\Renderer\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Renderer\Renderers\ShadowRenderer.h">
+      <Filter>Source\Engine\Renderer\Renderers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Resources\Engine\Shaders\Billboard.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </None>
+    <None Include="..\Resources\Engine\Shaders\DebugPrimitive.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </None>
+    <None Include="..\Resources\Engine\Shaders\Sprite.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </None>
+    <None Include="..\Scripts\GenerateGameLoader.ps1">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\Library\DirectXTex\DirectXTex.inl">
+      <Filter>Library\DirectXTex</Filter>
+    </None>
+    <None Include="..\Resources\Engine\Shaders\Standard.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </None>
+    <None Include="..\Resources\Engine\Shaders\InfiniteGrid.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </None>
+    <None Include="..\Resources\Engine\Shaders\Skybox.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </None>
+    <None Include="..\Resources\Engine\Shaders\ShadowMap.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </None>
+  </ItemGroup>
+</Project>

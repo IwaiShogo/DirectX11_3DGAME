@@ -1,0 +1,11 @@
+{
+    "Camera": {
+        "pitch": 6.359954357147217,
+        "x": 9.234309196472168,
+        "y": 6.922905445098877,
+        "yaw": -13.330023765563965,
+        "z": -11.266082763671875
+    },
+    "ContentBrowserPath": "C:\\HAL\\2\\ArcheEngine\\Resources\\Game\\Skyboxes",
+    "LastScene": "Resources/Game/Scenes/TitleScene.json"
+}
