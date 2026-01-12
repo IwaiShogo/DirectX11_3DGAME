@@ -4,6 +4,8 @@
 // Namespace: Sandbox
 // =================================================================
 
+#include "Sandbox/Components/GameProgression.h"
+#include "Sandbox/Components/PlayerData.h"
 #include "Sandbox/Components/PlayerMoveData.h"
 #include "Sandbox/Systems/PlayerMoveSystem.h"
 

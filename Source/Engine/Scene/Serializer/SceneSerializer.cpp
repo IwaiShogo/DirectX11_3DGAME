@@ -109,7 +109,15 @@ namespace Arche
 			auto& ctx = SceneManager::Instance().GetContext(); // 書き換え可能な参照を取得
 
 			if (envJson.contains("SkyboxTexture"))
-				ctx.environment.skyboxTexturePath = envJson["SkyboxTexture"].get<std::string>();
+			{
+				std::string path = envJson["SkyboxTexture"].get<std::string>();
+				ctx.environment.skyboxTexturePath = path;
+
+				if (!path.empty())
+				{
+					ResourceManager::Instance().GetTexture(path);
+				}
+			}
 
 			// 色の読み込み (JSON配列 -> XMFLOAT4)
 			auto LoadColor4 = [&](const char* key, XMFLOAT4& outVal) {

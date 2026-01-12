@@ -104,8 +104,7 @@ namespace Arche
 		// 2. シーン復元 (キャッシュから)
 		SceneSerializer::LoadScene(world, "Resources/Engine/Cache/SceneCache.json");
 
-		// 3. 環境設定の完全復元 (重要)
-		// システム生成「前」に正しいパスに戻しておくことで、RenderSystemの初期化時にロードさせる
+		// 3. 環境設定の完全復元
 		SceneManager::Instance().GetContext().environment = cachedEnv;
 		SceneManager::Instance().GetContext().environment.skyboxTexturePath = "";
 
@@ -133,7 +132,7 @@ namespace Arche
 	{
 		if (m_needSkyboxRestore)
 		{
-			SceneManager::Instance().GetContext().environment.skyboxTexturePath = m_cachedEnvironment.skyboxTexturePath;
+			SceneManager::Instance().GetContext().environment.skyboxTexturePath = m_playModeEnvBackup.skyboxTexturePath;
 			m_needSkyboxRestore = false;
 		}
 
@@ -148,13 +147,21 @@ namespace Arche
 		{
 			if (ctx.editorState == EditorState::Edit)
 			{
-				std::string path = SceneManager::Instance().GetCurrentScenePath();
-				if (path.empty()) path = "Resources/Game/Scenes/Untitled.json";
+				if (m_editorMode == EditorMode::Prefab)
+				{
+					Logger::LogWarning("Cannot save Main Scene while in Prefab Mode. Use 'Save Prefab' button.");
+				}
+				else
+				{
+					std::string path = SceneManager::Instance().GetCurrentScenePath();
+					if (path.empty()) path = "Resources/Game/Scenes/Untitled.json";
 
-				SceneSerializer::SaveScene(world, path);
-				SceneManager::Instance().SetDirty(false);
-				EditorPrefs::Instance().lastScenePath = path;
-				EditorPrefs::Instance().Save();
+					SceneSerializer::SaveScene(world, path);
+					SceneManager::Instance().SetDirty(false);
+					EditorPrefs::Instance().lastScenePath = path;
+					EditorPrefs::Instance().Save();
+					Logger::Log("Saved: " + path);
+				}
 			}
 		}
 
@@ -165,13 +172,13 @@ namespace Arche
 			{
 				// Play開始
 				SceneSerializer::SaveScene(world, "Resources/Engine/Cache/SceneCache.json");
-				m_cachedEnvironment = SceneManager::Instance().GetContext().environment;
+				m_playModeEnvBackup = SceneManager::Instance().GetContext().environment;
 				ctx.editorState = EditorState::Play;
 			}
 			else
 			{
 				// Play停止 (共通処理呼び出し)
-				StopPlayMode(world, ctx, m_cachedEnvironment);
+				StopPlayMode(world, ctx, m_playModeEnvBackup);
 				m_needSkyboxRestore = true;
 			}
 		}
@@ -228,7 +235,7 @@ namespace Arche
 				if (ImGui::Button("Play"))
 				{
 					SceneSerializer::SaveScene(world, "Resources/Engine/Cache/SceneCache.json");
-					m_cachedEnvironment = SceneManager::Instance().GetContext().environment;
+					m_playModeEnvBackup = SceneManager::Instance().GetContext().environment;
 					ctx.editorState = EditorState::Play;
 				}
 			}
@@ -237,7 +244,7 @@ namespace Arche
 				if (ImGui::Button("Stop"))
 				{
 					// Play停止 (共通処理呼び出し)
-					StopPlayMode(world, ctx, m_cachedEnvironment);
+					StopPlayMode(world, ctx, m_playModeEnvBackup);
 					m_needSkyboxRestore = true;
 				}
 			}
@@ -273,7 +280,7 @@ namespace Arche
 	void Editor::OpenPrefab(const std::string& path)
 	{
 		// 0. 環境設定のバックアップ
-		m_cachedEnvironment = SceneManager::Instance().GetContext().environment;
+		m_prefabEnvBackup = SceneManager::Instance().GetContext().environment;
 
 		// プレファブ編集用背景設定
 		auto& env = SceneManager::Instance().GetContext().environment;
@@ -341,7 +348,7 @@ namespace Arche
 	{
 		CommandHistory::Clear();
 		// 環境設定の復元
-		SceneManager::Instance().GetContext().environment = m_cachedEnvironment;
+		SceneManager::Instance().GetContext().environment = m_prefabEnvBackup;
 
 		m_editorMode = EditorMode::Scene;
 		m_prefabWorld.reset();

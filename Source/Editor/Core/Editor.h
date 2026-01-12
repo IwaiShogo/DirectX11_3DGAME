@@ -141,9 +141,12 @@ namespace Arche
 		Entity m_prefabRoot = NullEntity;
 
 		// キャッシュ用変数
-		SceneEnvironment m_cachedEnvironment;	// 環境設定のバックアップ
-		SceneEnvironment m_prefabEnvironment;	// プレファブモード用の背景設定
+		SceneEnvironment m_playModeEnvBackup;	// Playモード突入時のバックアップ
+		SceneEnvironment m_prefabEnvBackup;		// Prefabモード突入時のバックアップ
 		bool m_needSkyboxRestore = false;
+
+		bool m_isFirstUpdate = true;
+		std::string m_deferredSkyboxPath = "";
 	};
 }	// namespace Arche
 

@@ -477,54 +477,6 @@
     "Systems": [
         {
             "Group": 1,
-            "Name": "Physics System"
-        },
-        {
-            "Group": 1,
-            "Name": "Collision System"
-        },
-        {
-            "Group": 0,
-            "Name": "UI System"
-        },
-        {
-            "Group": 1,
-            "Name": "Lifetime System"
-        },
-        {
-            "Group": 0,
-            "Name": "Hierarchy System"
-        },
-        {
-            "Group": 1,
-            "Name": "Animation System"
-        },
-        {
-            "Group": 0,
-            "Name": "Render System"
-        },
-        {
-            "Group": 0,
-            "Name": "Model Render System"
-        },
-        {
-            "Group": 0,
-            "Name": "Billboard System"
-        },
-        {
-            "Group": 0,
-            "Name": "Sprite Render System"
-        },
-        {
-            "Group": 0,
-            "Name": "Text Render System"
-        },
-        {
-            "Group": 0,
-            "Name": "Audio System"
-        },
-        {
-            "Group": 1,
             "Name": "PlayerMoveSystem"
         }
     ]

@@ -226,8 +226,8 @@ namespace Arche
 #endif // _DEBUG
 		AudioManager::Instance().Finalize();
 
-		SystemRegistry::Instance().Clear();
-		ComponentRegistry::Instance().Clear();
+		//SystemRegistry::Instance().Clear();
+		//ComponentRegistry::Instance().Clear();
 
 		ResourceManager::Instance().Clear();
 

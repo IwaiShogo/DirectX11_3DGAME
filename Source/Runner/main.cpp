@@ -228,7 +228,7 @@ int main()
 		std::thread watcher([&]() {
 			while (!stopWatcher) {
 				// F5キー または 自動検知
-				if (CheckForDllUpdate()/* || (GetAsyncKeyState(VK_F5) & 0x8000)*/) {
+				if (CheckForDllUpdate() || (GetAsyncKeyState(VK_F5) & 0x8000)) {
 					if (g_app) g_app->RequestReload(); // ゲームループを終了させる
 					// 連続検知防止
 					std::this_thread::sleep_for(std::chrono::milliseconds(1000));

@@ -105,7 +105,7 @@ namespace Arche
 
 	ComponentRegistry& Arche::ComponentRegistry::Instance()
 	{
-		static ComponentRegistry instance;
-		return instance;
+		static ComponentRegistry* instance = new ComponentRegistry();
+		return *instance;
 	}
 }

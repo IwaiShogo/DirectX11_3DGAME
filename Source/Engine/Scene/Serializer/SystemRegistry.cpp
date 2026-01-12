@@ -5,7 +5,7 @@ namespace Arche
 {
 	SystemRegistry& SystemRegistry::Instance()
 	{
-		static SystemRegistry instance;
-		return instance;
+		static SystemRegistry* instance = new SystemRegistry();
+		return *instance;
 	}
 }

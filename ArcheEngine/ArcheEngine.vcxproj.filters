@@ -303,10 +303,14 @@
     <ClCompile Include="..\Source\Engine\Renderer\Renderers\GridRenderer.cpp">
       <Filter>Source\Engine\Renderer\Renderers</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Engine\Renderer\Renderers\SkyboxRenderer.cpp" />
-    <ClCompile Include="..\Source\Engine\Renderer\Core\ShadowMap.cpp" />
     <ClCompile Include="..\Source\Engine\Renderer\Renderers\ShadowRenderer.cpp">
       <Filter>Source\Engine\Renderer\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Renderer\Renderers\SkyboxRenderer.cpp">
+      <Filter>Source\Engine\Renderer\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Renderer\Core\ShadowMap.cpp">
+      <Filter>Source\Engine\Renderer\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
