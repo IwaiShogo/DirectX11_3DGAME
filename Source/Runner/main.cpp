@@ -8,6 +8,8 @@
 #include <thread>
 #include <objbase.h>
 #include "Engine/Core/Application.h"
+#include "Engine/Scene/Serializer/ComponentRegistry.h"
+#include "Engine/Scene/Serializer/SystemRegistry.h"
 
 // 関数ポインタの型定義
 typedef Arche::Application* (*CreateAppFunc)();
@@ -260,6 +262,14 @@ int main()
 			g_app = nullptr;
 		}
 
+		if (isReloading)
+		{
+			Arche::ComponentRegistry::Destroy();
+			Arche::SystemRegistry::Destroy();
+
+			Arche::Application::RegisterEngineResources();
+		}
+
 		if (!isReloading) break;
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(200));
@@ -294,7 +304,7 @@ int main()
 
 		// ループの先頭に戻り、新しいDLLをロードする
 	}
-
+	
 	CoUninitialize();
 	UnloadGameDLL();
 	return 0;

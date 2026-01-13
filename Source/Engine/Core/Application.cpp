@@ -205,6 +205,17 @@ namespace Arche
 		m_gameRT = std::make_unique<RenderTarget>();
 		m_gameRT->Create(m_device.Get(), m_width, m_height);
 #endif // _DEBUG
+
+#ifdef _DEBUG
+		// デバッグビルド
+		// -> エディットモードで開始
+		SceneManager::Instance().GetContext().editorState = EditorState::Edit;
+#else
+		// リリースビルド
+		// -> 強制的にPlayモードで開始する
+		SceneManager::Instance().GetContext().editorState = EditorState::Play;
+#endif
+
 	}
 
 	Application::~Application()
@@ -225,9 +236,6 @@ namespace Arche
 		}
 #endif // _DEBUG
 		AudioManager::Instance().Finalize();
-
-		//SystemRegistry::Instance().Clear();
-		//ComponentRegistry::Instance().Clear();
 
 		ResourceManager::Instance().Clear();
 
@@ -259,6 +267,10 @@ namespace Arche
 	void Application::Run()
 	{
 		SceneManager::Instance().Initialize();
+
+#ifndef _DEBUG
+		SceneManager::Instance().GetContext().editorState = EditorState::Play;
+#endif // !_DEBUG
 
 #ifdef _DEBUG
 		Context& ctx = SceneManager::Instance().GetContext();
@@ -308,8 +320,10 @@ namespace Arche
 			{
 				startScene = lastScene;
 			}
-			SceneManager::Instance().LoadSceneAsync(startScene, new ImmediateTransition());
-#endif // _DEBUG
+			SceneManager::Instance().LoadSceneAsync(startScene, nullptr);
+#else
+			SceneManager::Instance().LoadSceneAsync(startScene, nullptr);
+#endif
 		}
 
 		// 残留メッセージ
@@ -341,6 +355,48 @@ namespace Arche
 				Time::WaitFrame();
 			}
 		}
+	}
+
+	void Application::RegisterEngineResources()
+	{
+		// 1. システムの再登録 (名前はJSONと一致させる)
+		auto& sysReg = SystemRegistry::Instance();
+		sysReg.Register<PhysicsSystem>("Physics System");
+		sysReg.Register<CollisionSystem>("Collision System");
+		sysReg.Register<UISystem>("UI System");
+		sysReg.Register<LifetimeSystem>("Lifetime System");
+		sysReg.Register<HierarchySystem>("Hierarchy System");
+		sysReg.Register<AnimationSystem>("Animation System");
+		sysReg.Register<RenderSystem>("Render System");
+		sysReg.Register<ModelRenderSystem>("Model Render System");
+		sysReg.Register<SpriteRenderSystem>("Sprite Render System");
+		sysReg.Register<BillboardSystem>("Billboard System");
+		sysReg.Register<TextRenderSystem>("Text Render System");
+		sysReg.Register<AudioSystem>("Audio System");
+		sysReg.Register<ButtonSystem>("Button System");
+
+		// 2. コンポーネントの再登録
+		auto& compReg = ComponentRegistry::Instance();
+		compReg.Register<Tag>("Tag");
+		compReg.Register<Transform>("Transform");
+		compReg.Register<Transform2D>("Transform2D");
+		compReg.Register<Rigidbody>("Rigidbody");
+		compReg.Register<Collider>("Collider");
+		compReg.Register<MeshComponent>("MeshComponent");
+		compReg.Register<SpriteComponent>("SpriteComponent");
+		compReg.Register<BillboardComponent>("BillboardComponent");
+		compReg.Register<Animator>("Animator");
+		compReg.Register<Camera>("Camera");
+		compReg.Register<PointLight>("PointLight");
+		compReg.Register<AudioSource>("AudioSource");
+		compReg.Register<Relationship>("Relationship");
+		compReg.Register<PrefabInstance>("PrefabInstance");
+		compReg.Register<Canvas>("Canvas");
+		compReg.Register<TextComponent>("TextComponent");
+		compReg.Register<Button>("Button");
+		compReg.Register<Image>("Image");
+
+		Logger::Log("Engine resources re-registered.");
 	}
 
 	void Application::Update()

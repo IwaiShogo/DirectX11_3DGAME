@@ -1,11 +1,11 @@
 {
     "Camera": {
-        "pitch": 6.544955253601074,
-        "x": 8.889925003051758,
-        "y": 6.825154781341553,
-        "yaw": -13.195024490356445,
-        "z": -10.917020797729492
+        "pitch": 6.414955139160156,
+        "x": 18.117412567138672,
+        "y": 8.418767929077148,
+        "yaw": -13.42502498626709,
+        "z": -14.436034202575684
     },
-    "ContentBrowserPath": "C:\\HAL\\2\\DX22_3D\\Source\\Sandbox\\Components",
+    "ContentBrowserPath": "C:\\HAL\\DX22\\DirectX11_3DGAME\\Resources\\Game\\Skyboxes",
     "LastScene": "Resources/Game/Scenes/TitleScene.json"
 }

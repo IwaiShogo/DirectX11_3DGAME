@@ -5,7 +5,28 @@ namespace Arche
 {
 	SystemRegistry& SystemRegistry::Instance()
 	{
-		static SystemRegistry* instance = new SystemRegistry();
-		return *instance;
+		return *GetInstancePtr();
+	}
+
+	SystemRegistry*& SystemRegistry::GetInstancePtr()
+	{
+		static SystemRegistry* instance = nullptr;
+
+		if (instance == nullptr)
+		{
+			instance = new SystemRegistry();
+		}
+
+		return instance;
+	}
+
+	void SystemRegistry::Destroy()
+	{
+		SystemRegistry*& ptr = GetInstancePtr();
+		if (ptr)
+		{
+			delete ptr;
+			ptr = nullptr;
+		}
 	}
 }

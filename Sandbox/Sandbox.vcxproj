@@ -178,9 +178,13 @@
     <ClCompile Include="..\Source\Sandbox\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Source\Sandbox\Components\GameProgression.h" />
+    <ClInclude Include="..\Source\Sandbox\Components\PlayerData.h" />
     <ClInclude Include="..\Source\Sandbox\Components\PlayerMoveData.h" />
     <ClInclude Include="..\Source\Sandbox\GameLoader.h" />
+    <ClInclude Include="..\Source\Sandbox\Systems\PlayerActionSystem.h" />
     <ClInclude Include="..\Source\Sandbox\Systems\PlayerMoveSystem.h" />
+    <ClInclude Include="..\Source\Sandbox\Systems\TimeManagerSystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

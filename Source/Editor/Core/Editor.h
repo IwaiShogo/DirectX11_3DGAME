@@ -145,8 +145,8 @@ namespace Arche
 		SceneEnvironment m_prefabEnvBackup;		// Prefabモード突入時のバックアップ
 		bool m_needSkyboxRestore = false;
 
-		bool m_isFirstUpdate = true;
-		std::string m_deferredSkyboxPath = "";
+		int m_skyboxCheckFrame = 0;
+		std::string m_startupSkyboxPath = "";
 	};
 }	// namespace Arche
 

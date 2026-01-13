@@ -27,6 +27,10 @@ namespace Arche
 		// シングルトン取得
 		static SystemRegistry& Instance();
 
+		static SystemRegistry*& GetInstancePtr();
+
+		static void Destroy();
+
 		/**
 		 * @brief	システムを型として登録する
 		 * @tparam	T		システムのクラス（ISystem継承）

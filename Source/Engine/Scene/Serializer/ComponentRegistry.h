@@ -144,7 +144,11 @@ namespace Arche
 			std::function<void(Registry&, Entity, int, std::function<void(int, int)>, std::function<void()>, CommandCallback)> drawInspectorDnD;
 		};
 
+		static ComponentRegistry*& GetInstancePtr();
+
 		static ComponentRegistry& Instance();
+
+		static void Destroy();
 
 		// コンポーネント登録関数
 		template<typename T>

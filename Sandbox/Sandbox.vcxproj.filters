@@ -35,5 +35,17 @@
     <ClInclude Include="..\Source\Sandbox\GameLoader.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\PlayerActionSystem.h">
+      <Filter>Source\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Components\GameProgression.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Components\PlayerData.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\TimeManagerSystem.h">
+      <Filter>Source\Systems</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

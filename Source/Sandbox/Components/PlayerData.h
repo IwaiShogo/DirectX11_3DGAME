@@ -31,24 +31,27 @@ namespace Arche
 	{
 		Idle,
 		Run,
-		Dash,	// ダッシュ斬り中
-		Spin,	// 回転斬り中
-		Drift,	// ドリフト衝撃波発生中
+		DashSlash,	// ダッシュ斬り
+		Drift,		// ドリフト中
+		Attack,		// 通常攻撃
+		Dead
 	};
 
 	struct PlayerController
 	{
 		PlayerState state = PlayerState::Idle;
-		float actionTimer = 0.0f;	// アクション継続時間計算用
 
 		// ダッシュ・ドリフト用パラメータ
-		XMFLOAT3 moveDirection = { 0, 0, 0 };
-		float currentSpeed = 0.0f;
-		float dashSpeed = 20.0f;
+		float moveSpeed = 10.0f;
+		float dashSpeed = 25.0f;
 		float dashDuration = 0.2f;	// ダッシュ継続時間
 
-		// ドリフト判定用
+		// 内部制御用
+		float actionTimer = 0.0f;				// アクション継続時間計算用
+		XMFLOAT3 moveDirection = { 0, 0, 1 };	// 向いている方向
 		bool isDrifting = false;
+
+		PlayerController() = default;
 	};
 	ARCHE_COMPONENT(PlayerController,
 		REFLECT_VAR(state)

@@ -80,6 +80,13 @@ namespace Arche
 		{
 			io.Fonts->AddFontDefault();
 		}
+
+		m_skyboxCheckFrame = 0;
+		m_startupSkyboxPath = "";
+		m_needSkyboxRestore = false;
+
+		m_playModeEnvBackup = SceneEnvironment();
+		m_prefabEnvBackup = SceneEnvironment();
 	}
 
 	void Editor::Shutdown()
@@ -130,6 +137,35 @@ namespace Arche
 
 	void Editor::Draw(World& world, Context& ctx)
 	{
+		if (m_skyboxCheckFrame < 30)
+		{
+			// スカイボックスのパスが読み込まれたか確認
+			if (!ctx.environment.skyboxTexturePath.empty())
+			{
+				// パスが来たら、即座に退避して空にする（変更通知の準備）
+				m_startupSkyboxPath = ctx.environment.skyboxTexturePath;
+				ctx.environment.skyboxTexturePath = "";
+
+				// リソースロードをキック
+				ResourceManager::Instance().GetTexture(m_startupSkyboxPath);
+
+				// 監視終了（カウンターをリミット以上に飛ばす）
+				m_skyboxCheckFrame = 100;
+			}
+			else
+			{
+				// まだロードされていないので次のフレームへ持ち越し
+				m_skyboxCheckFrame++;
+			}
+		}
+		// 退避したパスがあるなら、次のフレームで戻す
+		else if (!m_startupSkyboxPath.empty())
+		{
+			// パスを戻す（これで「空」→「パスあり」の変化が検知され、描画に反映される）
+			ctx.environment.skyboxTexturePath = m_startupSkyboxPath;
+			m_startupSkyboxPath = ""; // 完了
+		}
+
 		if (m_needSkyboxRestore)
 		{
 			SceneManager::Instance().GetContext().environment.skyboxTexturePath = m_playModeEnvBackup.skyboxTexturePath;

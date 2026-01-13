@@ -55,6 +55,8 @@ namespace Arche
 		 */
 		void Run();
 
+		static void RegisterEngineResources();
+
 		// --- アクセサ ---
 
 		/**

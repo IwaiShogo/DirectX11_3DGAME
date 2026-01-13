@@ -102,10 +102,30 @@ namespace Arche
 		return s_inspectorStates.find(id) != s_inspectorStates.end();
 	}
 #endif // _DEBUG
-
-	ComponentRegistry& Arche::ComponentRegistry::Instance()
+	ComponentRegistry*& ComponentRegistry::GetInstancePtr()
 	{
-		static ComponentRegistry* instance = new ComponentRegistry();
-		return *instance;
+		static ComponentRegistry* instance = nullptr;
+
+		if (instance == nullptr)
+		{
+			instance = new ComponentRegistry();
+		}
+
+		return instance;
+	}
+
+	ComponentRegistry& ComponentRegistry::Instance()
+	{
+		return *GetInstancePtr();
+	}
+
+	void ComponentRegistry::Destroy()
+	{
+		ComponentRegistry*& ptr = GetInstancePtr();
+		if (ptr)
+		{
+			delete ptr;
+			ptr = nullptr;
+		}
 	}
 }
