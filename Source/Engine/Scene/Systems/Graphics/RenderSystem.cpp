@@ -1,20 +1,6 @@
 ﻿/*****************************************************************//**
- * @file	RenderSystem.h
+ * @file	RenderSystem.cpp
  * @brief	描画処理
- *
- * @details
- *
- * ------------------------------------------------------------
- * @author	Iwai Shogo
- * ------------------------------------------------------------
- *
- * @date	2025/11/23	初回作成日
- * 			作業内容：	- 追加：
- *
- * @update	2025/xx/xx	最終更新日
- * 			作業内容：	- XX：
- *
- * @note	（省略可）
  *********************************************************************/
 
  // ===== インクルード =====
@@ -72,7 +58,6 @@ namespace Arche
 
 					eye = XMLoadFloat3(&trans.position);
 					// 回転行列を作成 (Pitch: X軸回転, Yaw: Y軸回転)
-					// Transform.rotation.x を Pitch(上下)、y を Yaw(左右) として使います
 					XMMATRIX rotationMatrix = XMMatrixRotationRollPitchYaw(trans.rotation.x, trans.rotation.y, 0.0f);
 					// 前方ベクトル (0, 0, 1) を回転させる
 					XMVECTOR lookDir = XMVector3TransformCoord(XMVectorSet(0, 0, 1, 0), rotationMatrix);
@@ -108,7 +93,7 @@ namespace Arche
 		// スカイボックス描画
 		m_skyboxRenderer.Render(viewMatrix, projMatrix, context.environment);
 
-		// グリッドと軸の描画（Collider設定に関わらず出す）
+		// グリッドと軸の描画
 		if (context.debugSettings.showGrid)
 		{
 			XMVECTOR camPosVec = XMMatrixInverse(nullptr, viewMatrix).r[3];
@@ -123,17 +108,18 @@ namespace Arche
 
 		if (context.debugSettings.showAxis) PrimitiveRenderer::DrawAxis();
 
-		// 3. オブジェクト描画
+		// 3. コライダー描画 (ワイヤーフレームフラグを渡すように修正)
 		if (context.debugSettings.showColliders)
 		{
-			PrimitiveRenderer::SetFillMode(context.debugSettings.wireframeMode);
+			// ※PrimitiveRenderer::Draw** の第5引数(wireframe)に設定を渡すことで制御します
+			bool isWire = context.debugSettings.wireframeMode;
 
 			registry.view<Transform, Collider>().each([&](Entity e, Transform& t, Collider& c)
 				{
 					XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 					if (registry.has<Tag>(e))
 					{
-						std::string name = registry.get<Tag>(e).name.c_str();
+						std::string name = registry.get<Tag>(e).tag.c_str();
 						if (name == "Player") color = { 0.0f, 1.0f, 0.0f, 1.0f };
 						if (name == "Enemy") color = { 1.0f, 0.0f, 0.0f, 1.0f };
 					}
@@ -154,40 +140,37 @@ namespace Arche
 					XMFLOAT3 center;
 					XMStoreFloat3(&center, centerVec);
 
-					// タイプ別描画
+					// タイプ別描画 (修正: 最後の引数に isWire を追加)
 					if (c.type == ColliderType::Box)
 					{
 						XMFLOAT3 size = { c.boxSize.x * gScale.x, c.boxSize.y * gScale.y, c.boxSize.z * gScale.z };
-						PrimitiveRenderer::DrawBox(center, size, gRot, color);
+						PrimitiveRenderer::DrawBox(center, size, gRot, color, isWire);
 					}
 					else if (c.type == ColliderType::Sphere)
 					{
 						// スケールの最大値を半径に適用
 						float maxScale = std::max({ gScale.x, gScale.y, gScale.z });
-						PrimitiveRenderer::DrawSphere(center, c.radius * maxScale, color);
+						PrimitiveRenderer::DrawSphere(center, c.radius * maxScale, color, isWire);
 					}
 					else if (c.type == ColliderType::Capsule) {
 						// 半径: スケールのXZ最大値, 高さ: Yスケール
 						float maxScaleXZ = std::max(gScale.x, gScale.z);
-						PrimitiveRenderer::DrawCapsule(center, c.radius * maxScaleXZ, c.height * gScale.y, gRot, color);
+						PrimitiveRenderer::DrawCapsule(center, c.radius * maxScaleXZ, c.height * gScale.y, gRot, color, isWire);
 					}
 					else if (c.type == ColliderType::Cylinder) {
 						float maxScaleXZ = std::max(gScale.x, gScale.z);
-						PrimitiveRenderer::DrawCylinder(center, c.radius * maxScaleXZ, c.height * gScale.y, gRot, color);
+						PrimitiveRenderer::DrawCylinder(center, c.radius * maxScaleXZ, c.height * gScale.y, gRot, color, isWire);
 					}
 				});
 
 			registry.view<Transform, PointLight>().each([&](Entity e, Transform& t, PointLight& l) {
-				// 高原の中心
+				// 光源の中心
 				XMFLOAT4 iconColor = { 1.0f, 1.0f, 0.3f, 1.0f };
-
-				// 中心位置
-				PrimitiveRenderer::DrawSphere(t.position, 0.2f, iconColor);
+				PrimitiveRenderer::DrawSphere(t.position, 0.2f, iconColor, false); // 中心は常にソリッド
 
 				// 範囲
-				PrimitiveRenderer::SetFillMode(true);	// ワイヤーフレーム
 				XMFLOAT4 rangeColor = { 1.0f, 1.0f, 0.3f, 0.3f };
-				PrimitiveRenderer::DrawSphere(t.position, l.range, rangeColor);
+				PrimitiveRenderer::DrawSphere(t.position, l.range, rangeColor, true); // 範囲は常にワイヤー
 				});
 		}
 
@@ -196,24 +179,13 @@ namespace Arche
 		// -------------------------------------------------------
 		if (context.debugSettings.showSoundLocation) {
 
-			// ビルボード描画開始 (カメラ行列を渡す)
 			BillboardRenderer::Begin(viewMatrix, projMatrix);
 
-			// アイコン画像を取得 (assets.json または LoadTexture で指定したキー)
-			// ※とりあえず "player" か、用意した "icon_sound" を指定
 			auto iconTex = ResourceManager::Instance().GetTexture("star");
-
-			// 画像がなければ "player" などで代用
 			if (!iconTex) iconTex = ResourceManager::Instance().GetTexture("star");
 
 			if (iconTex) {
-				// 記録されている音イベントをループ
 				for (const auto& evt : AudioManager::Instance().GetSoundEvents()) {
-
-					// ビルボードを描画
-					// 位置: evt.position
-					// サイズ: 1.0f x 1.0f (3D空間での1メートル四方)
-					// 色: 赤っぽくして目立たせる
 					BillboardRenderer::Draw(
 						iconTex.get(),
 						evt.position,
@@ -222,9 +194,6 @@ namespace Arche
 					);
 				}
 			}
-
-			// ステートの後始末（深度書き込みなどを元に戻す必要がある場合）
-			// BillboardRendererは半透明(Blend)を使うので、最後にBlendStateを切ると安全です
 			PrimitiveRenderer::GetDeviceContext()->OMSetBlendState(nullptr, nullptr, 0xffffffff);
 		}
 
@@ -233,60 +202,44 @@ namespace Arche
 		// ------------------------------------------------------------
 		if (context.debugSettings.showAxis)
 		{
-			// A. 現在のビューポートを保存
 			UINT numViewports = 1;
 			D3D11_VIEWPORT oldViewport;
 			PrimitiveRenderer::GetDeviceContext()->RSGetViewports(&numViewports, &oldViewport);
 
-			// B. 右上用の新しいビューポートを作成
-			float gizmoSize = 100.0f;	// 100x100ピクセル
-			float padding = 20.0f;		// 画面端からの隙間
+			float gizmoSize = 100.0f;
+			float padding = 20.0f;
 
 			D3D11_VIEWPORT gizmoViewport = {};
 			gizmoViewport.Width = gizmoSize;
 			gizmoViewport.Height = gizmoSize;
 			gizmoViewport.MinDepth = 0.0f;
 			gizmoViewport.MaxDepth = 1.0f;
-
-			// Config::SCREEN_WIDTH ではなく、現在のビューポート（oldViewport）の幅を使う！
-			// これにより、Sceneビューのサイズが変わっても、その中の右上に正しく表示されます
 			gizmoViewport.TopLeftX = oldViewport.Width - gizmoSize - padding;
 			gizmoViewport.TopLeftY = padding;
 
-			// ビューポート適用
 			PrimitiveRenderer::GetDeviceContext()->RSSetViewports(1, &gizmoViewport);
 
-			// C.ギズモ用のビュー行列
 			XMMATRIX gizmoRotMatrix = XMMatrixRotationRollPitchYaw(savedRotation.x, savedRotation.y, 0.0f);
-
-			// 2. ギズモカメラの位置計算
 			XMVECTOR offset = XMVector3TransformCoord(XMVectorSet(0, 0, -5.0f, 0), gizmoRotMatrix);
 			XMVECTOR gizmoEye = offset;
 			XMVECTOR gizmoTarget = XMVectorSet(0, 0, 0, 0);
-
-			// 上方向も回転させる
 			XMVECTOR gizmoUp = XMVector3TransformCoord(XMVectorSet(0, 1, 0, 0), gizmoRotMatrix);
 			XMMATRIX gizmoView = XMMatrixLookAtLH(gizmoEye, gizmoTarget, gizmoUp);
 			XMMATRIX gizmoProj = XMMatrixPerspectiveFovLH(XM_PIDIV4, 1.0f, 0.1f, 100.0f);
 
-			// D. ギズモ描画開始
 			PrimitiveRenderer::Begin(gizmoView, gizmoProj);
+
+			// ギズモは常にソリッドで描画
 			PrimitiveRenderer::SetFillMode(false);
 
-			// 軸の描画 (X:赤, Y:緑, Z:青)
 			float len = 1.5f;
-			// X軸
 			PrimitiveRenderer::DrawArrow(XMFLOAT3(0, 0, 0), XMFLOAT3(len, 0, 0), XMFLOAT4(1, 0, 0, 1));
-			// Y軸
 			PrimitiveRenderer::DrawArrow(XMFLOAT3(0, 0, 0), XMFLOAT3(0, len, 0), XMFLOAT4(0, 1, 0, 1));
-			// Z軸
 			PrimitiveRenderer::DrawArrow(XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, len), XMFLOAT4(0, 0, 1, 1));
 
-			// 中央のボックス（ピボット）
-			PrimitiveRenderer::DrawBox(XMFLOAT3(0, 0, 0), XMFLOAT3(0.7f, 0.7f, 0.7f), XMFLOAT4(0, 0, 0, 0), XMFLOAT4(0.8f, 0.8f, 0.8f, 1));
+			PrimitiveRenderer::DrawBox(XMFLOAT3(0, 0, 0), XMFLOAT3(0.7f, 0.7f, 0.7f), XMFLOAT4(0, 0, 0, 0), XMFLOAT4(0.8f, 0.8f, 0.8f, 1), false);
 
-			// E. ビューポートを元に戻す
-			PrimitiveRenderer::SetFillMode(true);
+			// ビューポートを元に戻す
 			PrimitiveRenderer::GetDeviceContext()->RSSetViewports(1, &oldViewport);
 		}
 	}

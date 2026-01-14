@@ -87,30 +87,36 @@ namespace Arche
 			// 名前とタグ
 			if (reg.has<Tag>(primary))
 			{
-				auto& tag = reg.get<Tag>(primary);
-				char buf[256];
+				auto& tagComp = reg.get<Tag>(primary);
 
-				if (isSingle)
+				// 1. Name (ヒエラルキー表示名)
+				char nameBuf[256];
+				memset(nameBuf, 0, sizeof(nameBuf));
+				strcpy_s(nameBuf, sizeof(nameBuf), tagComp.name.c_str());
+
+				// Enterキーで確定したら反映
+				if (ImGui::InputText("Name", nameBuf, sizeof(nameBuf), ImGuiInputTextFlags_EnterReturnsTrue))
 				{
-					// 単体時は名前編集可能
-					strcpy_s(buf, tag.name.c_str());
-					ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - 10.0f);
-					if (ImGui::InputText("##TagName", buf, sizeof(buf)))
-					{
-						tag.name = buf;
-					}
+					tagComp.name = nameBuf;
 				}
-				else
+				// 編集中も反映したい場合はこちら（お好みで）
+				else if (ImGui::IsItemDeactivatedAfterEdit())
 				{
-					// 複数時は編集不可（または一括リネーム）
-					std::string title = std::to_string(selection.size()) + " entities selected";
-					ImGui::Text("%s", title.c_str());
-					ImGui::SameLine();
-					ImGui::TextDisabled("(%s)", tag.name.c_str());
+					tagComp.name = nameBuf;
 				}
+
+				// 2. Tag (ロジック判定用)
+				char tagBuf[256];
+				memset(tagBuf, 0, sizeof(tagBuf));
+				strcpy_s(tagBuf, sizeof(tagBuf), tagComp.tag.c_str());
+
+				if (ImGui::InputText("Tag", tagBuf, sizeof(tagBuf)))
+				{
+					tagComp.tag = tagBuf;
+				}
+
+				ImGui::Separator();
 			}
-
-			ImGui::Separator();
 
 			// ------------------------------------------------------------
 			// 2. コンポーネント描画 (共通のものだけ表示)

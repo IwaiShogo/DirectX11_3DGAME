@@ -229,7 +229,7 @@ namespace Arche
 					{
 						if (ImGui::MenuItem(name.c_str()))
 						{
-							SystemRegistry::Instance().CreateSystem(world, name, SystemGroup::PlayOnly);
+							SystemRegistry::Instance().CreateSystem(world, name);
 							ImGui::CloseCurrentPopup();
 						}
 					}

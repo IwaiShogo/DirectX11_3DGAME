@@ -1296,9 +1296,9 @@ namespace Arche
 	{
 		if (!m_isInitialized) Initialize(registry);
 
-		// 1. イベントキューの初期化
-		auto& eventQueue = EventQueue::Instance();
-		eventQueue.Clear();
+		// 1. イベントマネージャーの初期化
+		auto& eventMgr = EventManager::Instance();
+		eventMgr.Clear();
 
 		// 2. 空間ハッシュのリセット
 		g_spatialHash.Clear();
@@ -1509,20 +1509,21 @@ namespace Arche
 		{
 			if (currentContactsMap.find(prev.first) == currentContactsMap.end())
 			{
-				eventQueue.Add(prev.first.first, prev.first.second, CollisionState::Exit, { 0,0,0 });
+				eventMgr.AddEvent(prev.first.first, prev.first.second, CollisionState::Exit, { 0,0,0 });
 			}
 		}
 		// Enter / Stay
 		for (auto& curr : currentContactsMap)
 		{
+			CollisionState state = CollisionState::Stay;
+
+			// 前回無かったらEnter
 			if (g_prevContacts.find(curr.first) == g_prevContacts.end())
 			{
-				eventQueue.Add(curr.first.first, curr.first.second, CollisionState::Enter, curr.second.normal);
+				state = CollisionState::Enter;
 			}
-			else
-			{
-				eventQueue.Add(curr.first.first, curr.first.second, CollisionState::Stay, curr.second.normal);
-			}
+
+			eventMgr.AddEvent(curr.first.first, curr.first.second, state, curr.second.normal);
 		}
 
 		// 履歴更新

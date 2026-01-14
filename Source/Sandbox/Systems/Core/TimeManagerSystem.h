@@ -4,7 +4,7 @@
 #include "Engine/Scene/Core/ECS/ECS.h"
 #include "Engine/Scene/Components/Components.h"
 #include "Engine/Core/Window/Input.h"
-#include "Sandbox/Components/PlayerData.h"
+#include "Sandbox/Components/Core/LifeTimer.h"
 
 namespace Arche
 {
@@ -21,7 +21,6 @@ namespace Arche
 		TimeManagerSystem()
 		{
 			m_systemName = "TimeManagerSystem";
-			m_group = SystemGroup::Always;
 		}
 
 		void Update(Registry& registry) override
@@ -48,10 +47,10 @@ namespace Arche
 			reg.view<LifeTimer>().each([&](Entity e, LifeTimer& timer) {
 				if (timer.isDead) return;
 
-				timer.currentInfo -= dt;
+				timer.currentTime -= dt;
 
 				// クライマックスタイム演出
-				if (timer.currentInfo <= 1.0f && timer.currentInfo > 0.0f)
+				if (timer.currentTime <= 1.0f && timer.currentTime > 0.0f)
 				{
 					// ヒットストップ中でなければスローを適用
 					if (!s_isHitStopActive) Time::timeScale = 0.5f;
@@ -61,9 +60,9 @@ namespace Arche
 					Time::timeScale = 1.0f;
 				} 
 
-				if (timer.currentInfo <= 0.0f)
+				if (timer.currentTime <= 0.0f)
 				{
-					timer.currentInfo = 0.0f;
+					timer.currentTime = 0.0f;
 					timer.isDead = true;
 					Logger::Log("Player Died due to Time Limit!");
 				}

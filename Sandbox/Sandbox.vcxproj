@@ -132,6 +132,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Engine\pch.h</PrecompiledHeaderFile>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ForcedIncludeFiles>Engine/pch.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -142,6 +143,9 @@
     <PostBuildEvent>
       <Command>xcopy /Y /S /I "$(SolutionDir)Resources" "$(OutDir)Resources"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$(SolutionDir)Scripts\GenerateGameLoader.ps1" -Target "Sandbox"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -156,6 +160,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Engine\pch.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>Engine/pch.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -166,6 +171,9 @@
     <PostBuildEvent>
       <Command>xcopy /Y /S /I "$(SolutionDir)Resources" "$(OutDir)Resources"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$(SolutionDir)Scripts\GenerateGameLoader.ps1" -Target "Sandbox"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Engine\pch.cpp">
@@ -178,13 +186,21 @@
     <ClCompile Include="..\Source\Sandbox\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Source\Sandbox\Components\GameProgression.h" />
-    <ClInclude Include="..\Source\Sandbox\Components\PlayerData.h" />
-    <ClInclude Include="..\Source\Sandbox\Components\PlayerMoveData.h" />
+    <ClInclude Include="..\Source\Sandbox\Components\Core\LifeTimer.h" />
+    <ClInclude Include="..\Source\Sandbox\Components\Enemy\EnemyStats.h" />
+    <ClInclude Include="..\Source\Sandbox\Components\Player\Bullet.h" />
+    <ClInclude Include="..\Source\Sandbox\Components\Player\PlayerController.h" />
+    <ClInclude Include="..\Source\Sandbox\Components\Player\PlayerMoveData.h" />
+    <ClInclude Include="..\Source\Sandbox\Components\Visual\GeometricDesign.h" />
     <ClInclude Include="..\Source\Sandbox\GameLoader.h" />
-    <ClInclude Include="..\Source\Sandbox\Systems\PlayerActionSystem.h" />
-    <ClInclude Include="..\Source\Sandbox\Systems\PlayerMoveSystem.h" />
-    <ClInclude Include="..\Source\Sandbox\Systems\TimeManagerSystem.h" />
+    <ClInclude Include="..\Source\Sandbox\Systems\Camera\CameraFollowSystem.h" />
+    <ClInclude Include="..\Source\Sandbox\Systems\Core\TimeManagerSystem.h" />
+    <ClInclude Include="..\Source\Sandbox\Systems\Enemy\DamageSystem.h" />
+    <ClInclude Include="..\Source\Sandbox\Systems\Enemy\EnemySpawnSystem.h" />
+    <ClInclude Include="..\Source\Sandbox\Systems\Player\BulletSystem.h" />
+    <ClInclude Include="..\Source\Sandbox\Systems\Player\PlayerActionSystem.h" />
+    <ClInclude Include="..\Source\Sandbox\Systems\Player\PlayerMoveSystem.h" />
+    <ClInclude Include="..\Source\Sandbox\Systems\Visual\GeometricRenderSystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

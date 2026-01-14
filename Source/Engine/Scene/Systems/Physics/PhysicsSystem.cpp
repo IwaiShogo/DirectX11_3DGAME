@@ -38,6 +38,13 @@ namespace Arche
 		// デルタタイムの制限（フレームレート低下時の付き抜け防止）
 		float dt = std::min(Time::DeltaTime(), 0.05f);
 
+		// 接地フラグのリセット
+		auto viewRB = registry.view<Rigidbody>();
+		for (auto entity : viewRB)
+		{
+			viewRB.get<Rigidbody>(entity).isGrounded = false;
+		}
+
 		registry.view<Transform, Rigidbody>().each([&](Entity e, Transform& t, Rigidbody& rb)
 			{
 				// Staticは何もしない
@@ -115,7 +122,21 @@ namespace Arche
 				XMStoreFloat3(&tA.position, posA);
 				XMStoreFloat3(&tB.position, posB);
 
-				// 【追加】速度補正
+				if (n.m128_f32[1] < -0.7f)
+				{
+					rbA.isGrounded = true;
+					if (rbA.velocity.y < 0.0f) rbA.velocity.y = 0.0f;
+				}
+
+				// Case B: BがAの上に乗っている (法線が上向き)
+				// n (A->B) が上を向いている = AがBの下にある
+				if (n.m128_f32[1] > 0.7f)
+				{
+					rbB.isGrounded = true;
+					if (rbB.velocity.y < 0.0f) rbB.velocity.y = 0.0f;
+				}
+
+				// 速度補正
 				// お互いの相対速度を計算し、法線方向の成分を打ち消す
 				XMVECTOR velA = XMLoadFloat3(&rbA.velocity);
 				XMVECTOR velB = XMLoadFloat3(&rbB.velocity);
@@ -143,7 +164,17 @@ namespace Arche
 				posA -= n * depth;
 				XMStoreFloat3(&tA.position, posA);
 
-				// 【追加】速度補正 (これが重要！)
+				if (n.m128_f32[1] < -0.7f)
+				{
+					rbA.isGrounded = true;
+
+					if (rbA.velocity.y < 0.0f)
+					{
+						rbA.velocity.y = 0.0f;
+					}
+				}
+
+				// 速度補正 (これが重要！)
 				XMVECTOR velA = XMLoadFloat3(&rbA.velocity);
 				// 法線方向の速度成分を計算
 				// AはBに対して -n 方向に押し出されるので、velocity と -n の内積を見るべきだが、
@@ -167,7 +198,17 @@ namespace Arche
 				posB += n * depth;
 				XMStoreFloat3(&tB.position, posB);
 
-				// 【追加】速度補正
+				if (n.m128_f32[1] > 0.7f)
+				{
+					rbB.isGrounded = true;
+
+					if (rbB.velocity.y < 0.0f)
+					{
+						rbB.velocity.y = 0.0f;
+					}
+				}
+
+				// 速度補正
 				XMVECTOR velB = XMLoadFloat3(&rbB.velocity);
 				// Bは n 方向に押し出される。
 				// n は A->B なので、velocity と n の内積がマイナスならA(壁)に向かっている。

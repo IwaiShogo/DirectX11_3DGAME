@@ -13,6 +13,33 @@
     <Filter Include="Source\Systems">
       <UniqueIdentifier>{d2249cca-e857-4003-9e06-55fef705267e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Components\Core">
+      <UniqueIdentifier>{a1f52597-f4f8-4f51-b805-be1331a544fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Components\Visual">
+      <UniqueIdentifier>{2b2fafc4-49fe-4e42-b8b8-fac4cf524e5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Components\Player">
+      <UniqueIdentifier>{a149d04f-2f45-4188-9444-81ad62534553}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Components\Enemy">
+      <UniqueIdentifier>{0e39dd71-be25-4d91-a9b4-44642d41fd88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Systems\Player">
+      <UniqueIdentifier>{47d8e370-137a-41c5-bfde-a29bb14d1876}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Systems\Core">
+      <UniqueIdentifier>{7725cc7a-9c46-4af2-ab63-44bc02014657}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Systems\Visual">
+      <UniqueIdentifier>{e364e2f6-3575-46a5-849a-191e4fb99421}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Systems\Enemy">
+      <UniqueIdentifier>{e595b6d0-bcd0-4aeb-8054-c2e1477c4c6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Systems\Camera">
+      <UniqueIdentifier>{4e9455a4-7823-4488-8d35-11214bf88ae8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Sandbox\main.cpp">
@@ -26,26 +53,50 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Source\Sandbox\Systems\PlayerMoveSystem.h">
-      <Filter>Source\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Sandbox\Components\PlayerMoveData.h">
-      <Filter>Source\Components</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\Sandbox\GameLoader.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Sandbox\Systems\PlayerActionSystem.h">
-      <Filter>Source\Systems</Filter>
+    <ClInclude Include="..\Source\Sandbox\Components\Core\LifeTimer.h">
+      <Filter>Source\Components\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Sandbox\Components\GameProgression.h">
-      <Filter>Source\Components</Filter>
+    <ClInclude Include="..\Source\Sandbox\Components\Player\PlayerController.h">
+      <Filter>Source\Components\Player</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Sandbox\Components\PlayerData.h">
-      <Filter>Source\Components</Filter>
+    <ClInclude Include="..\Source\Sandbox\Components\Visual\GeometricDesign.h">
+      <Filter>Source\Components\Visual</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Sandbox\Systems\TimeManagerSystem.h">
-      <Filter>Source\Systems</Filter>
+    <ClInclude Include="..\Source\Sandbox\Components\Enemy\EnemyStats.h">
+      <Filter>Source\Components\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\Player\PlayerActionSystem.h">
+      <Filter>Source\Systems\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\Core\TimeManagerSystem.h">
+      <Filter>Source\Systems\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\Visual\GeometricRenderSystem.h">
+      <Filter>Source\Systems\Visual</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\Enemy\EnemySpawnSystem.h">
+      <Filter>Source\Systems\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Components\Player\PlayerMoveData.h">
+      <Filter>Source\Components\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\Player\PlayerMoveSystem.h">
+      <Filter>Source\Systems\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Components\Player\Bullet.h">
+      <Filter>Source\Components\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\Player\BulletSystem.h">
+      <Filter>Source\Systems\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\Camera\CameraFollowSystem.h">
+      <Filter>Source\Systems\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\Enemy\DamageSystem.h">
+      <Filter>Source\Systems\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

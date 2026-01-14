@@ -59,20 +59,21 @@ namespace Arche
 	 */
 	struct Tag
 	{
-		StringId name;
+		std::string name = "Entity";
+		StringId tag = "Untagged";
 		std::vector<std::string> componentOrder;	// 表示順序を保存するリスト
 
 		// コンストラクタ
 		Tag() = default;
-		Tag(const char* str) : name(str) {}
-		Tag(const std::string& str) : name(str) {}
-		Tag(const StringId& id) : name(id) {}
+		Tag(const char* str) : tag(str) {}
+		Tag(const std::string& str) : tag(str) {}
+		Tag(const StringId& id) : tag(id) {}
 
 		// 比較演算子（StringIdの比較に委譲）
-		bool operator==(const Tag& other) const { return name == other.name; }
-		bool operator==(const StringId& strId) const { return name == strId; }
+		bool operator==(const Tag& other) const { return tag == other.tag; }
+		bool operator==(const StringId& strId) const { return tag == strId; }
 	};
-	ARCHE_COMPONENT(Tag, REFLECT_VAR(name) REFLECT_VAR(componentOrder))
+	ARCHE_COMPONENT(Tag, REFLECT_VAR(name) REFLECT_VAR(tag) REFLECT_VAR(componentOrder))
 
 	/**
 	 * @struct	Transform

@@ -312,6 +312,12 @@
     <ClCompile Include="..\Source\Engine\Renderer\Core\ShadowMap.cpp">
       <Filter>Source\Engine\Renderer\Core</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Engine\Resource\PrefabManager.cpp">
+      <Filter>Source\Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Physics\PhysicsEvents.cpp">
+      <Filter>Source\Engine\Physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Editor\Core\Editor.h">
@@ -613,6 +619,9 @@
     </ClInclude>
     <ClInclude Include="..\Source\Engine\Renderer\Renderers\ShadowRenderer.h">
       <Filter>Source\Engine\Renderer\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Engine\Resource\PrefabManager.h">
+      <Filter>Source\Engine\Resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

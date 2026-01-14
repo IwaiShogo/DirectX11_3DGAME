@@ -41,14 +41,21 @@ namespace Arche
 		{
 			m_creators[name] = [](World& world, SystemGroup group) -> ISystem*
 			{
-				return world.registerSystem<T>(group);
+				if(group == SystemGroup::Unspecified)
+				{
+					return world.registerSystem<T>();
+				}
+				else
+				{
+					return world.registerSystem<T>(group);
+				}
 			};
 		}
 
 		/**
 		 * @brief	名前からシステムを生成してWorldに登録する
 		 */
-		ISystem* CreateSystem(World& world, const std::string& name, SystemGroup group)
+		ISystem* CreateSystem(World& world, const std::string& name, SystemGroup group = SystemGroup::Unspecified)
 		{
 			if (m_creators.find(name) != m_creators.end())
 			{

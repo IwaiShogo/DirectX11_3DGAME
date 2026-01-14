@@ -138,7 +138,7 @@ namespace Arche
 
 				bool found = false;
 				world.getRegistry().view<Tag, Transform>().each([&](Entity e, Tag& tag, Transform& t) {
-					if (tag.name == "Player") {
+					if (tag.tag == "Player") {
 						t.position = { x, y, z };
 						if (world.getRegistry().has<Rigidbody>(e)) {
 							world.getRegistry().get<Rigidbody>(e).velocity = { 0, 0, 0 };
@@ -172,7 +172,7 @@ namespace Arche
 				if (args.empty()) return;
 				XMFLOAT3 pos = { 0, 5, 0 };
 				world.getRegistry().view<Tag, Transform>().each([&](auto, Tag& t, Transform& tr) {
-					if (t.name == "Player") pos = tr.position;
+					if (t.tag == "Player") pos = tr.position;
 					});
 				pos.y += 3.0f;
 

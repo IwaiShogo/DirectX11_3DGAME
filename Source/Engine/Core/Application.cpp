@@ -14,6 +14,7 @@
 #include "Engine/Core/Application.h"
 #include "Engine/Core/Window/Input.h"
 #include "Engine/Resource/ResourceManager.h"
+#include "Engine/Resource/PrefabManager.h"
 #include "Engine/Audio/AudioManager.h"
 #include "Engine/Core/Base/Logger.h"
 #include "Engine/Scene/Serializer/SceneSerializer.h"
@@ -91,6 +92,8 @@ namespace Arche
 		Input::Initialize();
 		// リソースマネージャー
 		ResourceManager::Instance().Initialize(m_device.Get());
+		// プレファブマネージャー
+		PrefabManager::Instance().Initialize();
 		// オーディオマネージャー
 		AudioManager::Instance().Initialize();
 		// FPS制御

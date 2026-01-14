@@ -1,0 +1,88 @@
+{
+    "Bullet": {
+        "Enabled": true,
+        "damage": 1.0,
+        "ownerTag": "Player",
+        "speed": 20.0
+    },
+    "Children": [],
+    "Collider": {
+        "Enabled": true,
+        "boxSize": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "height": 1.0,
+        "isTrigger": true,
+        "layer": 1,
+        "offset": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "radius": 0.5,
+        "type": 1
+    },
+    "GeometricDesign": {
+        "Enabled": true,
+        "color": [
+            1.0,
+            1.0,
+            0.0,
+            1.0
+        ],
+        "flashTimer": 0.0,
+        "isWireframe": true,
+        "pulseSpeed": 0.0,
+        "shapeType": 1,
+        "size": [
+            1.0,
+            1.0,
+            1.0
+        ]
+    },
+    "ID": 1,
+    "Lifetime": {
+        "Enabled": true,
+        "time": 2.0
+    },
+    "Rigidbody": {
+        "Enabled": true,
+        "drag": 0.10000000149011612,
+        "mass": 1.0,
+        "type": 1,
+        "useGravity": false
+    },
+    "Tag": {
+        "Enabled": true,
+        "componentOrder": [
+            "Transform",
+            "GeometricDesign",
+            "Lifetime",
+            "Collider",
+            "Rigidbody",
+            "Bullet"
+        ],
+        "name": "Bullet_Normal",
+        "tag": "Bullet"
+    },
+    "Transform": {
+        "Enabled": true,
+        "position": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "rotation": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ]
+    }
+}

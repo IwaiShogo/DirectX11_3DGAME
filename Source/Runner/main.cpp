@@ -304,6 +304,9 @@ int main()
 
 		// ループの先頭に戻り、新しいDLLをロードする
 	}
+
+	Arche::ComponentRegistry::Destroy();
+	Arche::SystemRegistry::Destroy();
 	
 	CoUninitialize();
 	UnloadGameDLL();

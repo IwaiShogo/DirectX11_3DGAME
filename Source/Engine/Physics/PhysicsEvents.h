@@ -43,27 +43,29 @@ namespace Arche
 			DirectX::XMFLOAT3 normal;	// 衝突法線
 		};
 
-		// フレームごとの全イベントを保持するコンテナ
-		// （これをRegistryのコンテキストやシングルトンとして扱う）
-		struct EventQueue
+		class ARCHE_API EventManager
 		{
-			std::vector<CollisionEvent> events;
+		public:
+			// インスタンス
+			static EventManager& Instance();
 
-			void Clear() { events.clear(); }
-
-			void Add(Entity a, Entity b, CollisionState state, const DirectX::XMFLOAT3& n)
+			// イベント通知
+			void AddEvent(Entity self, Entity other, CollisionState state, const XMFLOAT3& normal)
 			{
-				events.push_back({ a, b, state, n });
-				// 逆方向のイベントも必要なら登録
-				DirectX::XMFLOAT3 invNormal = { -n.x, -n.y, -n.z };
-				events.push_back({ b, a, state, invNormal });
+				m_events.push_back({ self, other, state, normal });
 			}
 
-			static inline EventQueue& Instance()
-			{
-				static EventQueue instance;
-				return instance;
-			}
+			// イベント全クリア
+			void Clear() { m_events.clear(); }
+
+			// イベントリスト取得
+			const std::vector<CollisionEvent>& GetEvents() const { return m_events; }
+
+		private:
+			std::vector<CollisionEvent> m_events;
+
+			EventManager() = default;
+			~EventManager() = default;
 		};
 
 	}	// namespace Physics

@@ -246,7 +246,7 @@ namespace Arche
 					if (ImGui::MenuItem("Create Empty"))
 					{
 						Entity e = world.create_entity()
-							.add<Tag>("GameObject")
+							.add<Tag>()
 							.add<Transform>().id();
 
 						if (world.getRegistry().has<Tag>(e))

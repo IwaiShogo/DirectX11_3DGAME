@@ -530,6 +530,17 @@ namespace Arche
 				return *this;
 			}
 
+			// 有効なエンティティ数
+			std::size_t size()
+			{
+				std::size_t count = 0;
+				for (auto e : *this)
+				{
+					count++;
+				}
+				return count;
+			}
+
 			// ヘルパー：最小プールを探す
 			template<std::size_t... Is>
 			void findSmallestPool(std::index_sequence<Is...>, std::size_t& minsize)
@@ -899,9 +910,10 @@ namespace Arche
 	// ------------------------------------------------------------
 	enum class SystemGroup
 	{
-		Always,		// 描画、入力、エディタUIなど（常に動く）
-		PlayOnly,	// 物理、ゲームロジック、寿命管理など（Play時のみ）
-		EditOnly,	// エディタ専用ギズモなど
+		Unspecified = -1,	// コンストラクタの設定を優先する
+		Always = 0,			// 描画、入力、エディタUIなど（常に動く）
+		PlayOnly = 1,		// 物理、ゲームロジック、寿命管理など（Play時のみ）
+		EditOnly = 2,		// エディタ専用ギズモなど
 	};
 
 	class ISystem
@@ -937,10 +949,12 @@ namespace Arche
 		template<typename T, typename... Args>
 		T* registerSystem(SystemGroup group, Args&&... args)
 		{
-			auto sys = std::make_unique<T>(std::forward<Args>(args)...);
-			sys->m_group = group;
-			auto ptr = sys.get();
-			systems.push_back(std::move(sys));
+			T* ptr = registerSystem<T>(std::forward<Args>(args)...);
+
+			if (group != SystemGroup::Unspecified)
+			{
+				ptr->m_group = group;
+			}
 			return ptr;
 		}
 
@@ -948,7 +962,10 @@ namespace Arche
 		template<typename T, typename... Args>
 		T* registerSystem(Args&&... args)
 		{
-			return registerSystem<T>(SystemGroup::PlayOnly, std::forward<Args>(args)...);
+			auto sys = std::make_unique<T>(std::forward<Args>(args)...);
+			auto ptr = sys.get();
+			systems.push_back(std::move(sys));
+			return ptr;
 		}
 
 		// システムの削除
@@ -983,6 +1000,7 @@ namespace Arche
 		{
 			for (auto& sys : systems)
 			{
+				sys->m_lastExecutionTime = 0.0f;
 				if (!sys->m_isEnabled) continue;
 
 				bool shouldRun = false;
@@ -991,6 +1009,7 @@ namespace Arche
 				case SystemGroup::Always:   shouldRun = true; break;
 				case SystemGroup::PlayOnly: shouldRun = (state == EditorState::Play); break;
 				case SystemGroup::EditOnly: shouldRun = (state == EditorState::Edit); break;
+				case SystemGroup::Unspecified: shouldRun = (state == EditorState::Play); break;
 				}
 
 				if (!shouldRun) continue;
@@ -1014,7 +1033,15 @@ namespace Arche
 			{
 				if (!sys->m_isEnabled) continue;
 
+				// 計測開始
+				auto start = std::chrono::high_resolution_clock::now();
+
 				sys->Render(registry, context);
+
+				// 計測終了
+				auto end = std::chrono::high_resolution_clock::now();
+				std::chrono::duration<double, std::milli> ms = end - start;
+				sys->m_lastExecutionTime += ms.count();
 			}
 		}
 

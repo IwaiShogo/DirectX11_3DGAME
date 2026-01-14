@@ -86,7 +86,7 @@
                     0.0
                 ],
                 "radius": 0.5,
-                "type": 2
+                "type": 3
             },
             "ID": 2,
             "IsActive": true,
@@ -109,10 +109,6 @@
                 "Enabled": true,
                 "jumpPower": 5.0,
                 "speed": 3.0
-            },
-            "PlayerMoveData": {
-                "Enabled": true,
-                "speed": 10.0
             },
             "Relationship": {
                 "Enabled": true,
@@ -522,10 +518,6 @@
         {
             "Group": 0,
             "Name": "Audio System"
-        },
-        {
-            "Group": 1,
-            "Name": "PlayerMoveSystem"
         }
     ]
 }

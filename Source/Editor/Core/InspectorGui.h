@@ -31,6 +31,16 @@ namespace Arche
 	inline std::unordered_map<std::string, ImFont*> g_InspectorFontMap;
 
 	// ------------------------------------------------------------
+	// Enum名の登録用テンプレート & マクロ
+	// ------------------------------------------------------------
+	template<typename T>
+	std::vector<const char*> GetEnumNames() { return {}; }
+
+	// ユーザーがヘッダ側で使うマクロ
+	#define ARCHE_REGISTER_ENUM_NAMES(EnumType, ...) \
+	namespace Arche { template<> inline std::vector<const char*> GetEnumNames<EnumType>() { return { __VA_ARGS__ }; } }
+
+	// ------------------------------------------------------------
 	// InspectorGuiVisitor
 	// 型に応じたImGuiウィジェットを描画する
 	// ------------------------------------------------------------
@@ -486,7 +496,38 @@ namespace Arche
 		template<typename T>
 		void operator()(T& val, const char* name)
 		{
-			ImGui::TextDisabled("%s: (Not Supported)", name);
+			// コンパイル時にEnumかどうか判定
+			if constexpr (std::is_enum_v<T>)
+			{
+				DrawWidget(name, val, [&]()
+					{
+						// 名前リストを取得してみる
+						std::vector<const char*> names = GetEnumNames<T>();
+
+						if (!names.empty())
+						{
+							// 名前が登録されていればコンボボックス
+							int currentItem = static_cast<int>(val);
+							if (ImGui::Combo(name, &currentItem, names.data(), (int)names.size()))
+							{
+								val = static_cast<T>(currentItem);
+							}
+						}
+						else
+						{
+							// 未登録なら整数入力で代用 (Not Supportedにはしない)
+							int intVal = static_cast<int>(val);
+							if (ImGui::InputInt(name, &intVal))
+							{
+								val = static_cast<T>(intVal);
+							}
+						}
+					});
+			}
+			else
+			{
+				ImGui::TextDisabled("%s: (Not Supported)", name);
+			}
 		}
 	};
 

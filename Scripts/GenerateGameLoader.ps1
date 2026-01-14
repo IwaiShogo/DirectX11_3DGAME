@@ -1,4 +1,10 @@
-﻿# =============================================================================
+﻿# ▼▼▼ 重要: これを必ずファイルの先頭（コメントより前でも可）に書いてください ▼▼▼
+param(
+    [string]$Target = "All"
+)
+# ▲▲▲ ここまで ▲▲▲
+
+# =============================================================================
 # Arche Engine Auto-Loader Generator (Relative to Source)
 # =============================================================================
 # "ARCHE_REGISTER_SYSTEM" または "ARCHE_COMPONENT" マクロが含まれている
@@ -8,11 +14,7 @@
 
 $ScriptDir = $PSScriptRoot
 $ProjectRoot = (Get-Item "$ScriptDir\..").FullName
-# インクルードの基準となる Source フォルダのパスを取得
 $SourceDir = Join-Path $ProjectRoot "Source"
-
-Write-Host "Project Root: $ProjectRoot"
-Write-Host "Include Base: $SourceDir"
 
 # --- 設定関数 ---
 function Generate-Loader ($scanRelPath, $outputRelPath, $namespace) {
@@ -40,29 +42,42 @@ function Generate-Loader ($scanRelPath, $outputRelPath, $namespace) {
         if ($fullPath.StartsWith($SourceDir)) {
             $relPath = $fullPath.Substring($SourceDir.Length)
         } else {
-            # 万が一Source外の場合はProjectRootから計算（保険）
             $relPath = $fullPath.Substring($ProjectRoot.Length)
         }
         
-        # 先頭の "\" や "/" を削除
+        # パス区切り文字の調整
         if ($relPath.StartsWith("\") -or $relPath.StartsWith("/")) {
             $relPath = $relPath.Substring(1)
         }
-        
-        # バックスラッシュをスラッシュに置換
         $relPath = $relPath.Replace("\", "/") 
         
         $content += "#include `"$relPath`"`n"
     }
 
-    Set-Content -Path $outputFile -Value $content -Encoding UTF8
-    Write-Host "Updated: $outputFile"
+    # 変更がある場合のみ書き込む（無限ビルド防止）
+    $needsWrite = $true
+    if (Test-Path $outputFile) {
+        $currentContent = Get-Content $outputFile -Raw -Encoding UTF8
+        if ($currentContent -eq $content) {
+            $needsWrite = $false
+            Write-Host "No changes detected for $outputFile. Skipping write."
+        }
+    }
+
+    if ($needsWrite) {
+        Set-Content -Path $outputFile -Value $content -Encoding UTF8
+        Write-Host "Updated: $outputFile"
+    }
 }
 
 # --- 実行 ---
 
-# 1. Engine側の生成
-Generate-Loader "Source\Engine\Scene" "Source\Engine\EngineLoader.h" "Engine"
+# Engine側: Targetが "Engine" または "All" の時だけ実行
+if ($Target -eq "Engine" -or $Target -eq "All") {
+    Generate-Loader "Source\Engine\Scene" "Source\Engine\EngineLoader.h" "Engine"
+}
 
-# 2. Sandbox(Game)側の生成
-Generate-Loader "Source\Sandbox" "Source\Sandbox\GameLoader.h" "Sandbox"
+# Sandbox側: Targetが "Sandbox" または "All" の時だけ実行
+if ($Target -eq "Sandbox" -or $Target -eq "All") {
+    Generate-Loader "Source\Sandbox" "Source\Sandbox\GameLoader.h" "Sandbox"
+}

@@ -163,6 +163,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Engine/pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Engine/pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="..\Source\Engine\Physics\PhysicsEvents.cpp" />
     <ClCompile Include="..\Source\Engine\Renderer\Core\RenderTarget.cpp" />
     <ClCompile Include="..\Source\Engine\Renderer\Core\ShadowMap.cpp" />
     <ClCompile Include="..\Source\Engine\Renderer\Data\Model.cpp" />
@@ -177,6 +178,7 @@
     <ClCompile Include="..\Source\Engine\Renderer\RHI\Texture.cpp" />
     <ClCompile Include="..\Source\Engine\Renderer\Text\FontManager.cpp" />
     <ClCompile Include="..\Source\Engine\Renderer\Text\TextRenderer.cpp" />
+    <ClCompile Include="..\Source\Engine\Resource\PrefabManager.cpp" />
     <ClCompile Include="..\Source\Engine\Resource\ResourceManager.cpp" />
     <ClCompile Include="..\Source\Engine\Scene\Core\ECS\ECS.cpp" />
     <ClCompile Include="..\Source\Engine\Scene\Core\SceneManager.cpp" />
@@ -261,6 +263,7 @@
     <ClInclude Include="..\Source\Engine\Renderer\Text\PrivateFontLoader.h" />
     <ClInclude Include="..\Source\Engine\Renderer\Text\TextRenderer.h" />
     <ClInclude Include="..\Source\Engine\Resource\Prefab.h" />
+    <ClInclude Include="..\Source\Engine\Resource\PrefabManager.h" />
     <ClInclude Include="..\Source\Engine\Resource\ResourceManager.h" />
     <ClInclude Include="..\Source\Engine\Scene\Animation\AnimatorController.h" />
     <ClInclude Include="..\Source\Engine\Scene\Components\ComponentDefines.h" />
@@ -457,7 +460,7 @@
       <Command>xcopy /Y /S /I "$(SolutionDir)Resources" "$(OutDir)Resources"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$(SolutionDir)Scripts\GenerateGameLoader.ps1"</Command>
+      <Command>powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$(SolutionDir)Scripts\GenerateGameLoader.ps1" -Target "Engine"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -489,7 +492,7 @@
       <Command>xcopy /Y /S /I "$(SolutionDir)Resources" "$(OutDir)Resources"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$(SolutionDir)Scripts\GenerateGameLoader.ps1"</Command>
+      <Command>powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$(SolutionDir)Scripts\GenerateGameLoader.ps1" -Target "Engine"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
