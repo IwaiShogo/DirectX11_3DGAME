@@ -612,6 +612,13 @@ namespace Arche
 
 }	// namespace Arche
 
+// Releaseビルド時（インスペクター無効）
+// ============================================================
+#else
+
+// マクロ呼び出しでのコンパイルエラーを防ぐための空定義
+#define ARCHE_REGISTER_ENUM_NAMES(EnumType, ...)
+
 #endif // _DEBUG
 
 #endif // !___INSPECTOR_GUI_H___
