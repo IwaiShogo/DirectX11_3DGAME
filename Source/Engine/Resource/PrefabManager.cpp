@@ -75,6 +75,7 @@ namespace Arche
 		// 1. エンティティ作成
 		Entity entity = registry.create();
 
+		// Transformを初期化 (位置・回転は引数から設定)
 		auto& baseTrans = registry.emplace<Transform>(entity, position, rotation, XMFLOAT3(1, 1, 1));
 		XMStoreFloat4x4(&baseTrans.worldMatrix, baseTrans.GetLocalMatrix());
 
@@ -82,35 +83,33 @@ namespace Arche
 		const auto& components = entityJson.contains("Components") ? entityJson.at("Components") : entityJson;
 
 		// --------------------------------------------------------
-		// Step A: Tagコンポーネントを最優先で作成 (強制手動設定)
+		// Step A: Tagコンポーネントを最優先で作成
 		// --------------------------------------------------------
-		// まず空のTagコンポーネントを確実に作成する
 		auto& tagComp = registry.emplace<Tag>(entity);
-
-		// デフォルトはプレファブ名をセット
 		tagComp.name = prefabName;
 		tagComp.tag = "Untagged";
 
-		// JSONにTag定義があれば上書きする
+		// JSONにTag定義があれば上書き
 		if (components.contains("Tag"))
 		{
 			const auto& tagJson = components.at("Tag");
 
-			// nameフィールドがあれば読み込む
-			if (tagJson.contains("name") && tagJson["name"].is_string())
-			{
-				tagComp.name = tagJson["name"].get<std::string>();
-			}
+			if (tagJson.contains("name") && tagJson["name"].is_string()) tagComp.name = tagJson["name"].get<std::string>();
+			if (tagJson.contains("tag") && tagJson["tag"].is_string())	 tagComp.tag = tagJson["tag"].get<std::string>();
 
-			// tagフィールドがあれば読み込む
-			if (tagJson.contains("tag") && tagJson["tag"].is_string())
+			// componentOrder (Inspectorの並び順) を復元する
+			if (tagJson.contains("componentOrder") && tagJson["componentOrder"].is_array())
 			{
-				tagComp.tag = tagJson["tag"].get<std::string>();
+				tagComp.componentOrder.clear();
+				for (const auto& compName : tagJson["componentOrder"])
+				{
+					tagComp.componentOrder.push_back(compName.get<std::string>());
+				}
 			}
 		}
 
 		// --------------------------------------------------------
-		// Step B: その他のコンポーネントを復元 (ComponentRegistry使用)
+		// Step B: その他のコンポーネントを復元
 		// --------------------------------------------------------
 		auto& interfaces = ComponentRegistry::Instance().GetInterfaces();
 
@@ -118,33 +117,46 @@ namespace Arche
 		{
 			std::string typeName = it.key();
 
-			// 無視するキー (Tagは処理済みなのでスキップ)
+			// 無視するキー
 			if (typeName == "Tag" || typeName == "ID" || typeName == "Children" || typeName == "Parent" || typeName == "IsActive")
 			{
 				continue;
 			}
 
+			// Transformの手動処理とリスト登録
 			if (typeName == "Transform")
 			{
-				auto itInterface = interfaces.find(typeName);
-				if (itInterface != interfaces.end())
+				auto& trans = registry.get<Transform>(entity);
+
+				// 位置と回転は引数を優先維持、スケールのみJSONから読み取る
+				trans.position = position;
+				trans.rotation = rotation;
+
+				if (it.value().contains("scale"))
 				{
-					itInterface->second.deserialize(registry, entity, components);
+					auto& s = it.value()["scale"];
+					if (s.is_array() && s.size() == 3)
+					{
+						trans.scale = { (float)s[0], (float)s[1], (float)s[2] };
+					}
+				}
 
-					auto& trans = registry.get<Transform>(entity);
-					trans.position = position;
-					trans.rotation = rotation;
+				XMStoreFloat4x4(&trans.worldMatrix, trans.GetLocalMatrix());
 
-					XMStoreFloat4x4(&trans.worldMatrix, trans.GetLocalMatrix());
+				// Inspector表示用リストになければ追加 (JSONから読み込めていない場合の保険)
+				if (std::find(tagComp.componentOrder.begin(), tagComp.componentOrder.end(), "Transform") == tagComp.componentOrder.end())
+				{
+					tagComp.componentOrder.push_back("Transform");
 				}
 				continue;
 			}
 
+			// その他のコンポーネント
 			auto itInterface = interfaces.find(typeName);
 			if (itInterface != interfaces.end())
 			{
 				const auto& iface = itInterface->second;
-				iface.add(registry, entity);
+				iface.add(registry, entity); // これが自動的にcomponentOrderに追加するはず
 				iface.deserialize(registry, entity, components);
 			}
 		}

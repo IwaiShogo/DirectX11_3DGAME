@@ -40,31 +40,6 @@
             }
         },
         {
-            "Camera": {
-                "Enabled": true,
-                "aspect": 1.7777777910232544,
-                "farZ": 1000.0,
-                "fov": 0.7853981852531433,
-                "nearZ": 0.10000000149011612
-            },
-            "Collider": {
-                "Enabled": true,
-                "boxSize": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "height": 1.0,
-                "isTrigger": false,
-                "layer": 1,
-                "offset": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "radius": 0.5,
-                "type": 3
-            },
             "ID": 2,
             "IsActive": true,
             "Relationship": {
@@ -77,9 +52,7 @@
             "Tag": {
                 "Enabled": true,
                 "componentOrder": [
-                    "Transform",
-                    "Camera",
-                    "Collider"
+                    "Transform"
                 ],
                 "name": "@Camera Root",
                 "tag": "Untagged"
@@ -87,13 +60,13 @@
             "Transform": {
                 "Enabled": true,
                 "position": [
-                    -0.31968021392822266,
-                    1.8767445087432861,
-                    -4.984645366668701
+                    0.0,
+                    0.0,
+                    0.0
                 ],
                 "rotation": [
                     0.0,
-                    -0.0,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -369,6 +342,31 @@
             }
         },
         {
+            "Camera": {
+                "Enabled": true,
+                "aspect": 1.7777777910232544,
+                "farZ": 1000.0,
+                "fov": 0.7853981852531433,
+                "nearZ": 0.10000000149011612
+            },
+            "Collider": {
+                "Enabled": true,
+                "boxSize": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "height": 1.0,
+                "isTrigger": false,
+                "layer": 1,
+                "offset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "radius": 0.5,
+                "type": 0
+            },
             "ID": 7,
             "IsActive": true,
             "Relationship": {
@@ -379,10 +377,12 @@
             "Tag": {
                 "Enabled": true,
                 "componentOrder": [
-                    "Transform"
+                    "Transform",
+                    "Camera",
+                    "Collider"
                 ],
                 "name": "MainCamera",
-                "tag": "Untagged"
+                "tag": "Camera"
             },
             "Transform": {
                 "Enabled": true,
@@ -393,7 +393,7 @@
                 ],
                 "rotation": [
                     0.0,
-                    0.0,
+                    -0.0,
                     0.0
                 ],
                 "scale": [

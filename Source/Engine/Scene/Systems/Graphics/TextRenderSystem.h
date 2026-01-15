@@ -40,30 +40,47 @@ namespace Arche
 
 		void Render(Registry& registry, const Context& ctx) override
 		{
-			// カメラ行列の取得 (BillboardSystemなどと同様)
 			XMMATRIX view = XMMatrixIdentity();
 			XMMATRIX proj = XMMatrixIdentity();
 			bool cameraFound = false;
 
-			auto cameraView = registry.view<Camera, Transform>();
-			for (auto e : cameraView)
+			if (ctx.renderCamera.useOverride)
 			{
-				auto& cam = cameraView.get<Camera>(e);
-				auto& t = cameraView.get<Transform>(e);
-
-				XMVECTOR eye = XMLoadFloat3(&t.position);
-				XMMATRIX rot = XMMatrixRotationRollPitchYaw(XMConvertToRadians(t.rotation.x), XMConvertToRadians(t.rotation.y), 0.0f);
-				XMVECTOR look = XMVector3TransformCoord(XMVectorSet(0, 0, 1, 0), rot);
-				XMVECTOR up = XMVector3TransformCoord(XMVectorSet(0, 1, 0, 0), rot);
-
-				view = XMMatrixLookToLH(eye, look, up);
-				proj = XMMatrixPerspectiveFovLH(cam.fov, cam.aspect, cam.nearZ, cam.farZ);
+				// エディタ（シーンビュー）やオーバーライド指定時
+				view = XMLoadFloat4x4(&ctx.renderCamera.viewMatrix);
+				proj = XMLoadFloat4x4(&ctx.renderCamera.projMatrix);
 				cameraFound = true;
-				break;
+			}
+			else
+			{
+				// ゲームビュー（通常時）: シーン内のカメラコンポーネントを探す
+				auto cameraView = registry.view<Camera, Transform>();
+				for (auto e : cameraView)
+				{
+					auto& cam = cameraView.get<Camera>(e);
+					auto& t = cameraView.get<Transform>(e);
+
+					// RenderSystem.cppの実装に合わせる（ラジアン変換を行わない）
+					XMVECTOR eye = XMLoadFloat3(&t.position);
+
+					// XMConvertToRadians を削除し、RenderSystemと同じ計算にする
+					XMMATRIX rot = XMMatrixRotationRollPitchYaw(t.rotation.x, t.rotation.y, 0.0f);
+
+					XMVECTOR look = XMVector3TransformCoord(XMVectorSet(0, 0, 1, 0), rot);
+					XMVECTOR up = XMVector3TransformCoord(XMVectorSet(0, 1, 0, 0), rot);
+
+					view = XMMatrixLookToLH(eye, look, up);
+					proj = XMMatrixPerspectiveFovLH(cam.fov, cam.aspect, cam.nearZ, cam.farZ);
+					cameraFound = true;
+					break;
+				}
 			}
 
-			// 3D描画のために行列を渡す
-			TextRenderer::Draw(registry, view, proj, nullptr);
+			// カメラが見つかった場合のみ描画
+			if (cameraFound)
+			{
+				TextRenderer::Draw(registry, view, proj, nullptr);
+			}
 		}
 	};
 
