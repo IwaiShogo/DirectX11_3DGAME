@@ -20,15 +20,19 @@ namespace Arche {
 		EnemyType type = EnemyType::Chaser;
 		float hp = 10.0f;
 		float moveSpeed = 5.0f;
-		float recoverAmount = 1.0f;	// 倒した時の回復量
-		float damage = 1.0f;		// プレイヤーへの接触ダメージ
+		
+		float collisionPenalty = 2.0f;	// 接触時にプレイヤーから奪う秒数
+		float killReward = 3.0f;		// 倒したときにプレイヤーに回復する秒数
+
+		EnemyStats() = default;
 	};
 
 	ARCHE_COMPONENT(EnemyStats,
 		REFLECT_VAR(type)
 		REFLECT_VAR(hp)
 		REFLECT_VAR(moveSpeed)
-		REFLECT_VAR(recoverAmount)
+		REFLECT_VAR(collisionPenalty)
+		REFLECT_VAR(killReward)
 	)
 }
 

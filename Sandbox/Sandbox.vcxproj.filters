@@ -56,9 +56,6 @@
     <ClInclude Include="..\Source\Sandbox\GameLoader.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Sandbox\Components\Core\LifeTimer.h">
-      <Filter>Source\Components\Core</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\Sandbox\Components\Player\PlayerController.h">
       <Filter>Source\Components\Player</Filter>
     </ClInclude>
@@ -70,9 +67,6 @@
     </ClInclude>
     <ClInclude Include="..\Source\Sandbox\Systems\Player\PlayerActionSystem.h">
       <Filter>Source\Systems\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Sandbox\Systems\Core\TimeManagerSystem.h">
-      <Filter>Source\Systems\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Sandbox\Systems\Visual\GeometricRenderSystem.h">
       <Filter>Source\Systems\Visual</Filter>
@@ -95,8 +89,26 @@
     <ClInclude Include="..\Source\Sandbox\Systems\Camera\CameraFollowSystem.h">
       <Filter>Source\Systems\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Sandbox\Systems\Enemy\DamageSystem.h">
+    <ClInclude Include="..\Source\Sandbox\Systems\Enemy\EnemyMoveSystem.h">
       <Filter>Source\Systems\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\Core\DamageSystem.h">
+      <Filter>Source\Systems\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Components\Core\GameManager.h">
+      <Filter>Source\Components\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Components\Player\PlayerTime.h">
+      <Filter>Source\Components\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\Core\SurvivalSystem.h">
+      <Filter>Source\Systems\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\Visual\FloatingTextSystem.h">
+      <Filter>Source\Systems\Visual</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Components\Visual\FloatingTextAnimation.h">
+      <Filter>Source\Components\Visual</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

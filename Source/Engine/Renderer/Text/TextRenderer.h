@@ -54,7 +54,7 @@ namespace Arche
 		 * @param	registry	ECSレジストリ
 		 * @param	rtv			描画先のRTV（nullptrの場合は現在バインドされている物を取得して使用）
 		 */
-		static void Draw(Registry& registry, ID3D11RenderTargetView* rtv = nullptr);
+		static void Draw(Registry& registry, const XMMATRIX& view, const XMMATRIX& projection, ID3D11RenderTargetView* rtv = nullptr);
 
 	private:
 		// D3D11テクスチャに関連付けられたD2Dレンダーターゲットを作成・取得

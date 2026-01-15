@@ -9,7 +9,7 @@
         ],
         "height": 1.0,
         "isTrigger": false,
-        "layer": 1,
+        "layer": 2,
         "offset": [
             0.0,
             0.0,
@@ -21,7 +21,7 @@
     "EnemyStats": {
         "Enabled": true,
         "hp": 10.0,
-        "moveSpeed": 4.0,
+        "moveSpeed": 2.0,
         "recoverAmount": 1.0,
         "type": 0
     },

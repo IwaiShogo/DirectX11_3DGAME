@@ -61,7 +61,7 @@ namespace Arche
 		s_brush.Reset();
 	}
 
-	void TextRenderer::Draw(Registry& registry, ID3D11RenderTargetView* rtv)
+	void TextRenderer::Draw(Registry& registry, const XMMATRIX& view, const XMMATRIX& projection, ID3D11RenderTargetView* rtv)
 	{
 		// RTVが指定されていない場合、現在バインドされている物を取得
 		ComPtr<ID3D11RenderTargetView> currentRTV;
@@ -88,61 +88,122 @@ namespace Arche
 			d2dRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), s_brush.GetAddressOf());
 		}
 
-		// ビューポートサイズ取得（解像度依存の配置のため）
+		// ビューポートサイズ取得
 		D2D1_SIZE_F rtSize = d2dRT->GetSize();
 
-		// ビューポート比率計算
-		float viewportWidth = rtSize.width;
-		float viewportHeight = rtSize.height;
+		// 2D UI用のスケーリング比率（Config::SCREEN_WIDTH基準）
+		float ratioX = rtSize.width / (float)Config::SCREEN_WIDTH;
+		float ratioY = rtSize.height / (float)Config::SCREEN_HEIGHT;
 
-		float ratioX = viewportWidth / (float)Config::SCREEN_WIDTH;
-		float ratioY = viewportHeight / (float)Config::SCREEN_HEIGHT;
+		// 3D投影用のビューポート定義
+		D3D11_VIEWPORT vp;
+		vp.Width = rtSize.width;
+		vp.Height = rtSize.height;
+		vp.MinDepth = 0.0f;
+		vp.MaxDepth = 1.0f;
+		vp.TopLeftX = 0;
+		vp.TopLeftY = 0;
 
-		// ECSからTextComponentを持つエンティティを走査
+		// --------------------------------------------------------
+		// ECSループ
+		// --------------------------------------------------------
 		registry.view<TextComponent>().each([&](Entity e, TextComponent& text)
 			{
-				// Transform2Dの取得
-				D2D1::Matrix3x2F worldMat = D2D1::Matrix3x2F::Identity();
+				if (text.text.empty() || text.color.w <= 0.0f) return;
 
+				D2D1::Matrix3x2F finalMat = D2D1::Matrix3x2F::Identity();
+				bool shouldDraw = true;
+
+				// =================================================================
+				// パターンA: 2D UI (Transform2D)
+				// =================================================================
 				if (registry.has<Transform2D>(e))
 				{
 					auto& t2d = registry.get<Transform2D>(e);
-					auto& m = t2d.worldMatrix;
+					// UISystemで計算済みの行列を取得 (Y-Up, Center Origin)
+					D2D1::Matrix3x2F worldMat = D2D1::Matrix3x2F(
+						t2d.worldMatrix._11, t2d.worldMatrix._12,
+						t2d.worldMatrix._21, t2d.worldMatrix._22,
+						t2d.worldMatrix._31, t2d.worldMatrix._32
+					);
 
-					worldMat = D2D1::Matrix3x2F(m._11, m._12, m._21, m._22, m._31, m._32);
+					// オフセット加算 (Y-UpなのでYはそのまま加算)
+					worldMat = worldMat * D2D1::Matrix3x2F::Translation(text.offset.x, text.offset.y);
+
+					// 座標系変換: UISystem(Center, Y-Up) -> Direct2D(TopLeft, Y-Down)
+					float screenHalfW = Config::SCREEN_WIDTH * 0.5f;
+					float screenHalfH = Config::SCREEN_HEIGHT * 0.5f;
+
+					// 1. テキスト自体の反転 (全体座標系反転による文字の裏返り防止)
+					D2D1::Matrix3x2F textFlip = D2D1::Matrix3x2F::Scale(1.0f, -1.0f);
+
+					// 2. 座標系の変換 (Y軸反転 + 中心移動)
+					D2D1::Matrix3x2F screenTransform = D2D1::Matrix3x2F::Scale(1.0f, -1.0f) * D2D1::Matrix3x2F::Translation(screenHalfW, screenHalfH);
+
+					// 3. ビューポート拡縮
+					D2D1::Matrix3x2F scaleToViewport = D2D1::Matrix3x2F::Scale(ratioX, ratioY);
+
+					// 行列合成: [TextFlip] -> [World] -> [CoordConv] -> [ViewportScale]
+					finalMat = textFlip * worldMat * screenTransform * scaleToViewport;
 				}
+				// =================================================================
+				// パターンB: 3D Billboard (Transform)
+				// =================================================================
+				else if (registry.has<Transform>(e))
+				{
+					auto& t3d = registry.get<Transform>(e);
+					XMVECTOR worldPos = XMLoadFloat3(&t3d.position);
+
+					// 必要なら3D空間オフセットを加算 (text.offsetを3Dオフセットとして扱う場合)
+					// worldPos = XMVectorAdd(worldPos, XMVectorSet(text.offset.x, text.offset.y, 0, 0));
+
+					// 3D座標 -> スクリーン座標 への変換
+					// vp.Width/Height が実際のRTサイズなので、戻り値は実際のピクセル座標
+					XMVECTOR screenPos = XMVector3Project(worldPos, 0, 0, vp.Width, vp.Height, 0, 1, projection, view, XMMatrixIdentity());
+
+					// カメラの後ろにある場合は描画しない
+					float depth = XMVectorGetZ(screenPos);
+					if (depth < 0.0f || depth > 1.0f)
+					{
+						shouldDraw = false;
+					}
+					else
+					{
+						// スクリーン座標を取得 (Direct2Dと同じ左上原点)
+						float x = XMVectorGetX(screenPos);
+						float y = XMVectorGetY(screenPos);
+
+						// 配置 (2Dオフセットがある場合はピクセル単位でずらす)
+						// ※3D投影は既に実サイズなので scaleToViewport は掛けない
+						finalMat = D2D1::Matrix3x2F::Translation(x + text.offset.x, y + text.offset.y);
+					}
+				}
+				// =================================================================
+				// パターンC: Transformなし (固定配置)
+				// =================================================================
 				else
 				{
-					worldMat = D2D1::Matrix3x2F::Translation(text.offset.x, text.offset.y);
+					D2D1::Matrix3x2F scaleToViewport = D2D1::Matrix3x2F::Scale(ratioX, ratioY);
+					finalMat = D2D1::Matrix3x2F::Translation(text.offset.x, text.offset.y) * scaleToViewport;
 				}
 
-				// 座標系変換
-				float screenHalfW = Config::SCREEN_WIDTH * 0.5f;
-				float screenHalfH = Config::SCREEN_HEIGHT * 0.5f;
+				if (!shouldDraw) return;
 
-				// 行列の平行移動成分を取り出し、変換
-				float worldX = worldMat.dx;
-				float worldY = worldMat.dy;
+				// --- 描画実行 ---
+				d2dRT->SetTransform(finalMat);
 
-				float d2dX = worldX + screenHalfW;
-				float d2dY = screenHalfH - worldY; // Y-Up -> Y-Down
-
-				D2D1::Matrix3x2F screenTransform = D2D1::Matrix3x2F::Scale(1.0f, -1.0f, D2D1::Point2F(0, 0)) * D2D1::Matrix3x2F::Translation(screenHalfW, screenHalfH);
-				D2D1::Matrix3x2F finalMat = worldMat * screenTransform;
-
-				// 色設定
+				// ブラシ色設定
 				s_brush->SetColor(D2D1::ColorF(text.color.x, text.color.y, text.color.z, text.color.w));
 
 				// テキストフォーマット取得
 				std::wstring wFontName = std::wstring(text.fontKey.begin(), text.fontKey.end());
-				if (wFontName.empty()) wFontName = L"Meiryo"; // デフォルト
+				if (wFontName.empty()) wFontName = L"Meiryo";
 
 				DWRITE_FONT_WEIGHT weight = text.isBold ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL;
 				DWRITE_FONT_STYLE style = text.isItalic ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL;
 
-				// フォント作成 (StringIdなど使っている場合は適宜修正)
 				auto format = FontManager::Instance().GetTextFormat(
-					StringId(text.fontKey), // キー
+					StringId(text.fontKey),
 					wFontName,
 					text.fontSize,
 					weight,
@@ -151,22 +212,17 @@ namespace Arche
 
 				if (format)
 				{
-					// 文字列変換 (UTF8 -> Wide)
+					// 文字列変換
 					int size_needed = MultiByteToWideChar(CP_UTF8, 0, text.text.c_str(), (int)text.text.size(), NULL, 0);
 					std::wstring wText(size_needed, 0);
 					MultiByteToWideChar(CP_UTF8, 0, text.text.c_str(), (int)text.text.size(), &wText[0], size_needed);
-
 					if (!wText.empty() && wText.back() == L'\0') wText.pop_back();
 
-					D2D1::Matrix3x2F textFlip = D2D1::Matrix3x2F::Scale(1.0f, -1.0f);
-					finalMat = textFlip * finalMat;
-
-					// 描画領域
-					float layoutW = viewportWidth * 2.0f;
-					float layoutH = viewportHeight * 2.0f;
+					// レイアウト枠
+					float layoutW = rtSize.width * 2.0f; // 十分な広さを確保
+					float layoutH = rtSize.height * 2.0f;
 					D2D1_RECT_F layoutRect;
 
-					// 配置設定
 					if (text.centerAlign)
 					{
 						layoutRect = D2D1::RectF(-layoutW * 0.5f, -layoutH * 0.5f, layoutW * 0.5f, layoutH * 0.5f);
@@ -180,13 +236,6 @@ namespace Arche
 						format->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 					}
 
-					// 画面比率（ウィンドウサイズ対応）
-					D2D1::Matrix3x2F scaleToViewport = D2D1::Matrix3x2F::Scale(ratioX, ratioY);
-
-					// 最終行列 = ワールド行列(Logic) * ビューポート拡縮
-					d2dRT->SetTransform(finalMat * scaleToViewport);
-
-					// 描画
 					d2dRT->DrawText(
 						wText.c_str(),
 						(UINT32)wText.length(),
@@ -197,20 +246,17 @@ namespace Arche
 				}
 			});
 
-		// 変換行列を戻す
+		// 変換行列をリセット
 		d2dRT->SetTransform(D2D1::Matrix3x2F::Identity());
-
 		d2dRT->EndDraw();
 	}
 
 	ID2D1RenderTarget* TextRenderer::GetD2DRenderTarget(ID3D11RenderTargetView* rtv)
 	{
-		// キャッシュにあれば返す
 		if (s_d2dTargets.find(rtv) != s_d2dTargets.end()) {
 			return s_d2dTargets[rtv].Get();
 		}
 
-		// なければ作成 (DXGI Surface経由)
 		ComPtr<ID3D11Resource> resource;
 		rtv->GetResource(&resource);
 		if (!resource) return nullptr;
@@ -219,12 +265,11 @@ namespace Arche
 		resource.As(&surface);
 		if (!surface) return nullptr;
 
-		// DXGIサーフェスのプロパティ
 		D2D1_RENDER_TARGET_PROPERTIES props =
 			D2D1::RenderTargetProperties(
 				D2D1_RENDER_TARGET_TYPE_DEFAULT,
 				D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED),
-				96.0f, 96.0f // DPI
+				96.0f, 96.0f
 			);
 
 		ComPtr<ID2D1RenderTarget> target;
@@ -237,11 +282,9 @@ namespace Arche
 		if (SUCCEEDED(hr))
 		{
 			target->SetDpi(96.0f, 96.0f);
-
 			s_d2dTargets[rtv] = target;
 			return target.Get();
 		}
 		return nullptr;
 	}
-
 }

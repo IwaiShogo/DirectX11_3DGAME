@@ -69,7 +69,7 @@ namespace Arche
 		}
 
 	private:
-		XMFLOAT3 offset = { 0.0f, 21.0f, -18.0f };
+		XMFLOAT3 offset = { 0.0f, 14.0f, -12.0f };
 		float smoothSpeed = 5.0f;	// 追従の滑らかさ
 	};
 }	// namespace Arche

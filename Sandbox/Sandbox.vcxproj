@@ -186,20 +186,24 @@
     <ClCompile Include="..\Source\Sandbox\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Source\Sandbox\Components\Core\LifeTimer.h" />
+    <ClInclude Include="..\Source\Sandbox\Components\Core\GameManager.h" />
     <ClInclude Include="..\Source\Sandbox\Components\Enemy\EnemyStats.h" />
     <ClInclude Include="..\Source\Sandbox\Components\Player\Bullet.h" />
     <ClInclude Include="..\Source\Sandbox\Components\Player\PlayerController.h" />
     <ClInclude Include="..\Source\Sandbox\Components\Player\PlayerMoveData.h" />
+    <ClInclude Include="..\Source\Sandbox\Components\Player\PlayerTime.h" />
+    <ClInclude Include="..\Source\Sandbox\Components\Visual\FloatingTextAnimation.h" />
     <ClInclude Include="..\Source\Sandbox\Components\Visual\GeometricDesign.h" />
     <ClInclude Include="..\Source\Sandbox\GameLoader.h" />
     <ClInclude Include="..\Source\Sandbox\Systems\Camera\CameraFollowSystem.h" />
-    <ClInclude Include="..\Source\Sandbox\Systems\Core\TimeManagerSystem.h" />
-    <ClInclude Include="..\Source\Sandbox\Systems\Enemy\DamageSystem.h" />
+    <ClInclude Include="..\Source\Sandbox\Systems\Core\DamageSystem.h" />
+    <ClInclude Include="..\Source\Sandbox\Systems\Core\SurvivalSystem.h" />
+    <ClInclude Include="..\Source\Sandbox\Systems\Enemy\EnemyMoveSystem.h" />
     <ClInclude Include="..\Source\Sandbox\Systems\Enemy\EnemySpawnSystem.h" />
     <ClInclude Include="..\Source\Sandbox\Systems\Player\BulletSystem.h" />
     <ClInclude Include="..\Source\Sandbox\Systems\Player\PlayerActionSystem.h" />
     <ClInclude Include="..\Source\Sandbox\Systems\Player\PlayerMoveSystem.h" />
+    <ClInclude Include="..\Source\Sandbox\Systems\Visual\FloatingTextSystem.h" />
     <ClInclude Include="..\Source\Sandbox\Systems\Visual\GeometricRenderSystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

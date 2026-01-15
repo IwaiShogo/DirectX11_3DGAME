@@ -7,20 +7,8 @@
     <Filter Include="Source">
       <UniqueIdentifier>{370486db-fab7-4741-a89b-7be6f958de11}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Editor">
-      <UniqueIdentifier>{38d92708-6605-4a6d-8edd-bebab77ee9ed}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Engine">
       <UniqueIdentifier>{a2fcf305-0919-411b-a8af-4d36fb391193}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Editor\Core">
-      <UniqueIdentifier>{2aa7c316-c9ed-4454-b45a-198ee53fc896}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Editor\Panels">
-      <UniqueIdentifier>{78b878df-b99b-4286-b024-f3a84cdd7848}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Editor\Tools">
-      <UniqueIdentifier>{e0e94256-f129-4653-831c-25d02ed4399f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Engine\Audio">
       <UniqueIdentifier>{2cc18db6-03b6-4311-8261-73f4ff8e3c51}</UniqueIdentifier>
@@ -132,6 +120,18 @@
     </Filter>
     <Filter Include="Library\ImNodes">
       <UniqueIdentifier>{a10edd4f-ebb2-4f36-a5f4-c4929eec5197}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Editor">
+      <UniqueIdentifier>{38d92708-6605-4a6d-8edd-bebab77ee9ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Editor\Core">
+      <UniqueIdentifier>{2aa7c316-c9ed-4454-b45a-198ee53fc896}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Editor\Panels">
+      <UniqueIdentifier>{78b878df-b99b-4286-b024-f3a84cdd7848}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Editor\Tools">
+      <UniqueIdentifier>{e0e94256-f129-4653-831c-25d02ed4399f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

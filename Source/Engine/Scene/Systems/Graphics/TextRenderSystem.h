@@ -40,7 +40,30 @@ namespace Arche
 
 		void Render(Registry& registry, const Context& ctx) override
 		{
-			TextRenderer::Draw(registry, nullptr);
+			// カメラ行列の取得 (BillboardSystemなどと同様)
+			XMMATRIX view = XMMatrixIdentity();
+			XMMATRIX proj = XMMatrixIdentity();
+			bool cameraFound = false;
+
+			auto cameraView = registry.view<Camera, Transform>();
+			for (auto e : cameraView)
+			{
+				auto& cam = cameraView.get<Camera>(e);
+				auto& t = cameraView.get<Transform>(e);
+
+				XMVECTOR eye = XMLoadFloat3(&t.position);
+				XMMATRIX rot = XMMatrixRotationRollPitchYaw(XMConvertToRadians(t.rotation.x), XMConvertToRadians(t.rotation.y), 0.0f);
+				XMVECTOR look = XMVector3TransformCoord(XMVectorSet(0, 0, 1, 0), rot);
+				XMVECTOR up = XMVector3TransformCoord(XMVectorSet(0, 1, 0, 0), rot);
+
+				view = XMMatrixLookToLH(eye, look, up);
+				proj = XMMatrixPerspectiveFovLH(cam.fov, cam.aspect, cam.nearZ, cam.farZ);
+				cameraFound = true;
+				break;
+			}
+
+			// 3D描画のために行列を渡す
+			TextRenderer::Draw(registry, view, proj, nullptr);
 		}
 	};
 

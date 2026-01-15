@@ -297,12 +297,6 @@
             },
             "ID": 6,
             "IsActive": true,
-            "LifeTimer": {
-                "Enabled": true,
-                "currentTime": 10.0,
-                "isDead": false,
-                "maxTime": 5.0
-            },
             "PlayerController": {
                 "Enabled": true,
                 "dashSpeed": 25.0,
@@ -319,6 +313,13 @@
                 "rotationSpeed": 15.0,
                 "runSpeed": 10.0,
                 "walkSpeed": 5.0
+            },
+            "PlayerTime": {
+                "Enabled": true,
+                "currentTime": 100.0,
+                "invincibilityTimer": 0.0,
+                "isDead": false,
+                "maxTime": 5.0
             },
             "Relationship": {
                 "Enabled": true,
@@ -341,7 +342,9 @@
                     "PlayerController",
                     "PlayerMoveData",
                     "GeometricDesign",
-                    "LifeTimer"
+                    "LifeTimer",
+                    "PlayerStats",
+                    "PlayerTime"
                 ],
                 "name": "Player",
                 "tag": "Player"
@@ -429,7 +432,28 @@
         "SkyboxTexture": ""
     },
     "Physics": {
-        "LayerCollision": []
+        "LayerCollision": [
+            {
+                "Layer": 2,
+                "Mask": 62
+            },
+            {
+                "Layer": 4,
+                "Mask": 62
+            },
+            {
+                "Layer": 8,
+                "Mask": 62
+            },
+            {
+                "Layer": 16,
+                "Mask": 62
+            },
+            {
+                "Layer": 32,
+                "Mask": 62
+            }
+        ]
     },
     "SceneName": "Untitled Scene",
     "Systems": [
@@ -495,10 +519,6 @@
         },
         {
             "Group": 1,
-            "Name": "TimeManagerSystem"
-        },
-        {
-            "Group": 1,
             "Name": "PlayerMoveSystem"
         },
         {
@@ -512,6 +532,18 @@
         {
             "Group": 1,
             "Name": "DamageSystem"
+        },
+        {
+            "Group": 1,
+            "Name": "EnemyMoveSystem"
+        },
+        {
+            "Group": 1,
+            "Name": "SurvivalSystem"
+        },
+        {
+            "Group": 1,
+            "Name": "FloatingTextSystem"
         }
     ]
 }

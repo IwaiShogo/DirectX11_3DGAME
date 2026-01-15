@@ -1,0 +1,61 @@
+{
+    "Children": [],
+    "FloatingTextAnimation": {
+        "Enabled": true,
+        "fadeSpeed": 1.5,
+        "moveSpeedY": 3.0
+    },
+    "ID": 1,
+    "Lifetime": {
+        "Enabled": true,
+        "time": 1.0
+    },
+    "Tag": {
+        "Enabled": true,
+        "componentOrder": [
+            "Transform",
+            "TextComponent",
+            "FloatingTextAnimation",
+            "Lifetime"
+        ],
+        "name": "DamagePopup",
+        "tag": "UI"
+    },
+    "TextComponent": {
+        "Enabled": true,
+        "centerAlign": true,
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "fontKey": "PixelMplus12",
+        "fontSize": 40.0,
+        "isBold": true,
+        "isItalic": false,
+        "offset": [
+            0.0,
+            0.0
+        ],
+        "text": "999"
+    },
+    "Transform": {
+        "Enabled": true,
+        "position": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "rotation": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ]
+    }
+}

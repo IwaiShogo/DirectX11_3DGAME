@@ -22,40 +22,79 @@ namespace Arche
 
 		void Update(Registry& registry) override
 		{
-			m_timer += Time::DeltaTime();
+			float dt = Time::DeltaTime();
 
-			int enemyCount = (int)registry.view<EnemyStats>().size();
+			// 1. スポーンタイマー更新
+			m_timer += dt;
+			if (m_timer < m_spawnInterval) return;
 
-			if (enemyCount < 10 && m_timer > 3.0f)
+			// 2. プレイヤーの位置を取得（中心にするため）
+			XMVECTOR centerPos = XMVectorZero();
+			bool playerFound = false;
+
+			auto view = registry.view<Tag, Transform>();
+			for (auto e : view)
 			{
-				SpawnEnemy(registry);
-				m_timer = 0.0f;
+				if (view.get<Tag>(e).tag == "Player")
+				{
+					centerPos = XMLoadFloat3(&view.get<Transform>(e).position);
+					playerFound = true;
+					break;
+				}
+			}
+
+			if (!playerFound) return;
+
+			// 3. 敵の数を制限（増えすぎ防止）
+			// 現在の敵の数をカウント
+			int enemyCount = 0;
+			auto enemyView = registry.view<EnemyStats>();
+			for (auto e : enemyView) enemyCount++;
+
+			if (enemyCount < m_maxEnemies)
+			{
+				SpawnEnemy(registry, centerPos);
+				m_timer = 0.0f; // タイマーリセット
+
+				// 時間経過で少しずつ間隔を短くする（難易度上昇）
+				if (m_spawnInterval > 0.5f) m_spawnInterval -= 0.01f;
 			}
 		}
 
 	private:
+		// パラメータ
 		float m_timer = 0.0f;
+		float m_spawnInterval = 3.0f; // 最初は3秒ごとに湧く
+		int m_maxEnemies = 50;		  // 画面内に最大50体まで
+		float m_spawnRadius = 20.0f;  // プレイヤーから20m離れた位置に湧く
 
-		void SpawnEnemy(Registry& registry)
+		void SpawnEnemy(Registry& registry, XMVECTOR centerPos)
 		{
-			XMFLOAT3 pos = GetRandomPosition();
+			// ランダムな位置を計算
+			// (乱数生成器はstaticにして使い回す)
+			static std::random_device rd;
+			static std::mt19937 gen(rd());
+			static std::uniform_real_distribution<float> distAngle(0.0f, XM_2PI); // 0 ~ 360度
+
+			float angle = distAngle(gen);
+
+			// 円周上の座標を求める (Yは0固定)
+			float x = cosf(angle) * m_spawnRadius;
+			float z = sinf(angle) * m_spawnRadius;
+			XMVECTOR offset = XMVectorSet(x, 0.0f, z, 0.0f);
+
+			XMVECTOR spawnPos = centerPos + offset;
+			XMFLOAT3 pos;
+			XMStoreFloat3(&pos, spawnPos);
 
 			std::string prefabName = (rand() % 100 < 20) ? "Enemy_Strong" : "Enemy_Normal";
 
-			Entity e = PrefabManager::Instance().Spawn(registry, prefabName, pos);
+			// プレファブから生成
+			// ※"Enemy_Normal" は既存のプレファブ名に合わせてください
+			PrefabManager::Instance().Spawn(registry, prefabName, pos, { 0,0,0 });
 
-			if (e == NullEntity)
-			{
-				Logger::Log("Prefab not found: " + prefabName);
-			}
-		}
-
-		XMFLOAT3 GetRandomPosition()
-		{
-			// プレイヤーの周囲
-			float r = 10.0f + (rand() % 10);
-			float angle = (rand() % 360) * 3.14159f / 180.0f;
-			return { cosf(angle) * r, 0.5f, sinf(angle) * r };
+			// ログ（デバッグ用）
+			// Logger::Log("Spawned Enemy at " + std::to_string(pos.x) + ", " + std::to_string(pos.z));
 		}
 	};
 }	// namespace Arche
