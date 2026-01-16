@@ -65,6 +65,7 @@ namespace Arche
 
 				// 初期化済みタグを生成
 				registry.emplace<TitleSceneTag>(registry.create());
+				AudioManager::Instance().PlayBGM("bgm_title.wav", 0.5f);
 			}
 
 			float dt = Time::DeltaTime();
@@ -208,12 +209,14 @@ namespace Arche
 			// 遷移
 			if (!ctx.isWarping && (Input::GetKeyDown(VK_SPACE) || Input::GetButtonDown(Button::A)))
 			{
+				AudioManager::Instance().PlaySE("se_start.wav", 0.5f);
 				ctx.isWarping = true;
 				ctx.stateTimer = 0.0f;
 			}
 
 			if (ctx.isWarping && ctx.stateTimer > 1.2f)
 			{
+				AudioManager::Instance().StopBGM();
 				SceneManager::Instance().LoadScene("Resources/Game/Scenes/StageSelectScene.json", new FadeTransition(0.5f, { 1,1,1,1 }));
 			}
 		}

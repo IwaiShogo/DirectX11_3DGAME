@@ -107,9 +107,6 @@
     <ClInclude Include="..\Source\Sandbox\Components\Player\PlayerTime.h">
       <Filter>Source\Components\Player</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Sandbox\Systems\Core\SurvivalSystem.h">
-      <Filter>Source\Systems\Core</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\Sandbox\Systems\Visual\FloatingTextSystem.h">
       <Filter>Source\Systems\Visual</Filter>
     </ClInclude>
@@ -154,6 +151,12 @@
     </ClInclude>
     <ClInclude Include="..\Source\Sandbox\Systems\Game\FieldSystem.h">
       <Filter>Source\Systems\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\Player\PlayerVisualSystem.h">
+      <Filter>Source\Systems\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\Enemy\EnemyAttackSystem.h">
+      <Filter>Source\Systems\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

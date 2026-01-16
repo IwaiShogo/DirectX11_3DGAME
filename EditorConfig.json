@@ -1,11 +1,11 @@
 {
     "Camera": {
-        "pitch": 6.944920063018799,
-        "x": 15.690086364746094,
-        "y": 31.750268936157227,
-        "yaw": -12.989842414855957,
-        "z": -53.15837860107422
+        "pitch": 6.394917011260986,
+        "x": 15.970892906188965,
+        "y": 0.3333669602870941,
+        "yaw": -13.564830780029297,
+        "z": -11.033439636230469
     },
     "ContentBrowserPath": "C:\\HAL\\2\\DX22_3D\\Resources\\Game\\Scenes",
-    "LastScene": "C:\\HAL\\2\\DX22_3D\\Resources\\Game\\Scenes\\GameScene.json"
+    "LastScene": "C:\\HAL\\2\\DX22_3D\\Resources\\Game\\Scenes\\StageSelectScene.json"
 }

@@ -1,18 +1,29 @@
 ﻿#pragma once
-// 必須インクルード（マクロ使用のため）
 #include "Engine/Scene/Components/Components.h"
 
-namespace Arche {
+namespace Arche
+{
+	// 攻撃の所有者（フレンドリーファイア防止用）
+	enum class EntityType {
+		None,
+		Player,
+		Enemy
+	};
 
-	/**
-	 * @struct Bullet
-	 * @brief  弾のパラメータ
-	 */
+	// 攻撃属性（ダメージや報酬倍率）
+	struct AttackAttribute {
+		float damage = 10.0f;
+		float rewardRate = 1.0f; // 撃破時の時間回復倍率
+		bool isPenetrate = false;
+	};
+
+	// 弾丸コンポーネント
 	struct Bullet
 	{
 		float speed = 20.0f;
 		float damage = 1.0f;
-		std::string ownerTag = "Player";
+		float lifeTime = 2.0f; // 生存時間
+		EntityType owner = EntityType::None;
 
 		Bullet() = default;
 	};
@@ -20,6 +31,9 @@ namespace Arche {
 	ARCHE_COMPONENT(Bullet,
 		REFLECT_VAR(speed)
 		REFLECT_VAR(damage)
-		REFLECT_VAR(ownerTag)
+		REFLECT_VAR(lifeTime)
 	)
+
+		// AttackAttributeもコンポーネントとして登録（必要に応じて）
+		// ARCHE_COMPONENT(AttackAttribute, REFLECT_VAR(damage)...) 
 }

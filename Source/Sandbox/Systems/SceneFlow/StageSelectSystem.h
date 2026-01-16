@@ -127,6 +127,8 @@ namespace Arche
 				ctx = SelectContext();
 				ctx.maxClearedStage = 4; // TODO: GameSession連携
 				InitScene(reg, ctx);
+
+				AudioManager::Instance().PlayBGM("bgm_stageselect.wav", 0.5f);
 				reg.emplace<StageSelectTag>(reg.create());
 			}
 
@@ -146,6 +148,7 @@ namespace Arche
 			if (ctx.state == SelectState::Decided && ctx.stateTimer > 1.5f)
 			{
 				GameSession::selectedStageId = ctx.nodes[ctx.currentIndex].info.id;
+				AudioManager::Instance().StopBGM();
 				SceneManager::Instance().LoadScene("Resources/Game/Scenes/GameScene.json", new FadeTransition(0.3f, { 1,1,1,1 }));
 			}
 		}
@@ -368,6 +371,7 @@ namespace Arche
 					ctx.state = SelectState::Switching; ctx.stateTimer = 0.0f;
 				}
 				else if (Input::GetButtonDown(Button::A) || Input::GetKeyDown(VK_SPACE)) {
+					AudioManager::Instance().PlaySE("se_start.wav", 0.5f);
 					if (ctx.nodes[ctx.currentIndex].isLocked) {
 						ctx.state = SelectState::Locked; ctx.stateTimer = 0.0f;
 					}
@@ -377,6 +381,7 @@ namespace Arche
 				}
 			}
 			else if (ctx.state == SelectState::Switching) {
+				AudioManager::Instance().PlaySE("se_dash.wav", 0.3f);
 				if (ctx.stateTimer > 0.15f) ctx.state = SelectState::Idle;
 			}
 		}

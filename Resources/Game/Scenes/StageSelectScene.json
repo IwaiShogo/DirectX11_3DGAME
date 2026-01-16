@@ -108,24 +108,24 @@
         ],
         "AmbientIntensity": 1.0,
         "SkyColorBottom": [
-            0.30000001192092896,
-            0.30000001192092896,
-            0.3499999940395355,
+            1.0,
+            0.0,
+            0.0,
             1.0
         ],
         "SkyColorHorizon": [
-            0.699999988079071,
-            0.75,
-            0.800000011920929,
+            0.0,
+            0.16216222941875458,
+            0.3243243098258972,
             1.0
         ],
         "SkyColorTop": [
-            0.25,
-            0.44999998807907104,
-            0.800000011920929,
+            0.0,
+            0.0,
+            0.0,
             1.0
         ],
-        "SkyboxTexture": "Resources/Game/Skyboxes/vz_apocalypse_cubemap_ue.dds"
+        "SkyboxTexture": ""
     },
     "Physics": {
         "LayerCollision": []

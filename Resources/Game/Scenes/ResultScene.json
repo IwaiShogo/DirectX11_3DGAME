@@ -1,5 +1,106 @@
 {
-    "Entities": [],
+    "Entities": [
+        {
+            "AudioListener": {
+                "Enabled": true
+            },
+            "Camera": {
+                "Enabled": true,
+                "aspect": 1.7777777910232544,
+                "farZ": 1000.0,
+                "fov": 0.7853981852531433,
+                "nearZ": 0.10000000149011612
+            },
+            "Collider": {
+                "Enabled": true,
+                "boxSize": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "height": 1.0,
+                "isTrigger": false,
+                "layer": 1,
+                "offset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "radius": 0.5,
+                "type": 0
+            },
+            "ID": 1,
+            "IsActive": true,
+            "Tag": {
+                "Enabled": true,
+                "componentOrder": [
+                    "Transform",
+                    "Camera",
+                    "Collider",
+                    "AudioListener"
+                ],
+                "name": "MainCamera",
+                "tag": "Camera"
+            },
+            "Transform": {
+                "Enabled": true,
+                "position": [
+                    0.0,
+                    0.0,
+                    -12.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "AudioSource": {
+                "Enabled": true,
+                "isLoop": true,
+                "playOnAwake": true,
+                "range": 20.0,
+                "soundKey": "",
+                "volume": 1.0
+            },
+            "ID": 2,
+            "IsActive": true,
+            "Tag": {
+                "Enabled": true,
+                "componentOrder": [
+                    "Transform",
+                    "AudioSource"
+                ],
+                "name": "Entity",
+                "tag": "Untagged"
+            },
+            "Transform": {
+                "Enabled": true,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        }
+    ],
     "Environment": {
         "AmbientColor": [
             1.0,
@@ -8,27 +109,48 @@
         ],
         "AmbientIntensity": 1.0,
         "SkyColorBottom": [
-            0.30000001192092896,
-            0.30000001192092896,
-            0.3499999940395355,
+            0.0,
+            0.0,
+            0.0,
             1.0
         ],
         "SkyColorHorizon": [
-            0.699999988079071,
-            0.75,
-            0.800000011920929,
+            0.0,
+            0.0,
+            0.0,
             1.0
         ],
         "SkyColorTop": [
-            0.25,
-            0.44999998807907104,
-            0.800000011920929,
+            0.0,
+            0.0,
+            0.0,
             1.0
         ],
         "SkyboxTexture": ""
     },
     "Physics": {
-        "LayerCollision": []
+        "LayerCollision": [
+            {
+                "Layer": 2,
+                "Mask": 62
+            },
+            {
+                "Layer": 4,
+                "Mask": 62
+            },
+            {
+                "Layer": 8,
+                "Mask": 62
+            },
+            {
+                "Layer": 16,
+                "Mask": 62
+            },
+            {
+                "Layer": 32,
+                "Mask": 62
+            }
+        ]
     },
     "SceneName": "Untitled Scene",
     "Systems": [
@@ -81,12 +203,12 @@
             "Name": "Audio System"
         },
         {
-            "Group": 1,
-            "Name": "ResultSystem"
-        },
-        {
             "Group": 0,
             "Name": "GeometricRenderSystem"
+        },
+        {
+            "Group": 1,
+            "Name": "ResultSystem"
         }
     ]
 }

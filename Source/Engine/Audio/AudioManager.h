@@ -41,14 +41,10 @@ namespace Arche
 	 * @class	AudioManager
 	 * @brief	オーディオマネージャー
 	 */
-	class AudioManager
+	class ARCHE_API AudioManager
 	{
 	public:
-		static AudioManager& Instance()
-		{
-			static AudioManager instance;
-			return instance;
-		}
+		static AudioManager& Instance();
 
 		void Initialize();
 		void Update(); // 毎フレーム呼ぶ（再生終了したボイスの掃除など）
@@ -57,11 +53,11 @@ namespace Arche
 		// --- 再生機能 ---
 
 		// SE再生 (Fire and Forget: 鳴らしっぱなし)
-		void PlaySE(std::string& key, float volume = 1.0f, float pitch = 0.0f);
-		void Play3DSE(std::string& key, const XMFLOAT3& emitterPos, const XMFLOAT3& listenerPos, float range, float volume);
+		void PlaySE(const std::string& key, float volume = 1.0f, float pitch = 0.0f);
+		void Play3DSE(const std::string& key, const XMFLOAT3& emitterPos, const XMFLOAT3& listenerPos, float range, float volume);
 
 		// BGM再生 (ループ再生、BGMは同時に1つだけ)
-		void PlayBGM(std::string& key, float volume = 1.0f, bool loop = true);
+		void PlayBGM(const std::string& key, float volume = 1.0f, bool loop = true);
 		void StopBGM(float fadeOutSeconds = 0.0f);
 
 		// --- 全体設定 ---

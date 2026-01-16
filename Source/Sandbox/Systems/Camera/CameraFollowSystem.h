@@ -1,78 +1,85 @@
 ﻿#pragma once
-
-// ===== インクルード =====
 #include "Engine/Scene/Core/ECS/ECS.h"
 #include "Engine/Scene/Components/Components.h"
-#include "Engine/Core/Window/Input.h"
+#include "Sandbox/Components/Player/PlayerMoveData.h"
+#include <cmath>
+#include <algorithm>
+#include <DirectXMath.h>
+
+using namespace DirectX;
 
 namespace Arche
 {
 	class CameraFollowSystem : public ISystem
 	{
 	public:
-		CameraFollowSystem()
-		{
-			m_systemName = "CameraFollowSystem";
-		}
+		CameraFollowSystem() { m_systemName = "CameraFollowSystem"; }
 
 		void Update(Registry& registry) override
 		{
 			float dt = Time::DeltaTime();
 
-			// 1. プレイヤーの位置を探す
+			Entity player = NullEntity;
 			XMVECTOR targetPos = XMVectorZero();
-			bool playerFound = false;
+			XMVECTOR playerVel = XMVectorZero();
 
+			// プレイヤー探索
 			auto entities = registry.view<Tag, Transform>();
-			for (auto e : entities)
-			{
-				// Tagコンポーネントの "tag" 変数で判定（"Player"と設定されているものを探す）
-				if (entities.get<Tag>(e).tag == "Player")
-				{
+			for (auto e : entities) {
+				if (entities.get<Tag>(e).tag == "Player") {
+					player = e;
 					targetPos = XMLoadFloat3(&entities.get<Transform>(e).position);
-					playerFound = true;
+					if (registry.has<Rigidbody>(e)) {
+						playerVel = XMLoadFloat3(&registry.get<Rigidbody>(e).velocity);
+					}
 					break;
 				}
 			}
 
-			if (!playerFound) return;
+			if (player == NullEntity) return;
 
-			// 2. カメラを移動させる
+			float speed = XMVectorGetX(XMVector3Length(playerVel * XMVectorSet(1, 0, 1, 0)));
+
 			auto cameras = registry.view<Camera, Transform>();
 			for (auto e : cameras)
 			{
+				if (!registry.has<AudioListener>(e)) {
+					registry.emplace<AudioListener>(e);
+				}
+
 				auto& camTrans = cameras.get<Transform>(e);
 
-				// 目標位置 = プレイヤー位置 + オフセット
-				XMVECTOR offsetVec = XMLoadFloat3(&offset);
-				XMVECTOR desiredPos = targetPos + offsetVec;
+				// 1. 位置計算
+				XMVECTOR baseOffset = XMVectorSet(0.0f, 22.0f, -18.0f, 0.0f);
+				float zoomFactor = std::clamp(speed / 50.0f, 0.0f, 0.5f);
+				XMVECTOR dynamicOffset = baseOffset + XMVectorSet(0, 4.0f, -4.0f, 0) * zoomFactor;
+
+				XMVECTOR desiredPos = targetPos + dynamicOffset;
 				XMVECTOR currentPos = XMLoadFloat3(&camTrans.position);
-
-				// 線形補間 (Lerp) で滑らかに移動
-				XMVECTOR smoothedPos = XMVectorLerp(currentPos, desiredPos, smoothSpeed * dt);
-
+				XMVECTOR smoothedPos = XMVectorLerp(currentPos, desiredPos, dt * 3.0f);
 				XMStoreFloat3(&camTrans.position, smoothedPos);
 
-				// カメラの注視点（LookAt）を設定
-				// 常にプレイヤーを見るように回転させる
-				XMVECTOR eye = smoothedPos;
-				XMVECTOR focus = targetPos;
-				XMVECTOR up = XMVectorSet(0, 1, 0, 0);
+				// 2. 回転計算
+				XMVECTOR lookTarget = targetPos + playerVel * 0.1f;
+				XMMATRIX viewMat = XMMatrixLookAtLH(smoothedPos, lookTarget, XMVectorSet(0, 1, 0, 0));
+				XMMATRIX camWorld = XMMatrixInverse(nullptr, viewMat);
 
-				// LookAt行列から回転（Quaternion/Euler）を計算するのは少し手間なので、
-				// 今回は簡易的に「固定角度」にするか、計算するか。
-				// 簡易実装: オフセットに基づいた固定角度を入れておく
-				camTrans.rotation.x = 45.0f; // 下を向く
-				camTrans.rotation.y = 0.0f;
-				camTrans.rotation.z = 0.0f;
+				XMFLOAT4X4 mat; XMStoreFloat4x4(&mat, camWorld);
+				float pitch = asinf(-mat._32);
+				float yaw = 0.0f;
+				float roll = 0.0f;
+
+				if (cosf(pitch) > 0.001f) {
+					yaw = atan2f(mat._31, mat._33);
+					roll = atan2f(mat._12, mat._22);
+				}
+				else {
+					yaw = atan2f(-mat._13, mat._11);
+				}
+				camTrans.rotation = { pitch, yaw, roll };
 			}
 		}
-
-	private:
-		XMFLOAT3 offset = { 0.0f, 21.0f, -18.0f };
-		float smoothSpeed = 5.0f;	// 追従の滑らかさ
 	};
-}	// namespace Arche
-
+}
 #include "Engine/Scene/Serializer/SystemRegistry.h"
 ARCHE_REGISTER_SYSTEM(Arche::CameraFollowSystem, "CameraFollowSystem")

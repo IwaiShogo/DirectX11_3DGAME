@@ -1,0 +1,39 @@
+{
+    "AudioSource": {
+        "Enabled": true,
+        "isLoop": true,
+        "playOnAwake": true,
+        "range": 20.0,
+        "soundKey": "bgm_title.wav",
+        "volume": 1.0
+    },
+    "Children": [],
+    "ID": 3,
+    "Tag": {
+        "Enabled": true,
+        "componentOrder": [
+            "Transform",
+            "AudioSource"
+        ],
+        "name": "Entity",
+        "tag": "Untagged"
+    },
+    "Transform": {
+        "Enabled": true,
+        "position": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "rotation": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ]
+    }
+}

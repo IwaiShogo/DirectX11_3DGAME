@@ -201,8 +201,8 @@
     <ClInclude Include="..\Source\Sandbox\GameLoader.h" />
     <ClInclude Include="..\Source\Sandbox\Systems\Camera\CameraFollowSystem.h" />
     <ClInclude Include="..\Source\Sandbox\Systems\Core\DamageSystem.h" />
-    <ClInclude Include="..\Source\Sandbox\Systems\Core\SurvivalSystem.h" />
     <ClInclude Include="..\Source\Sandbox\Systems\Enemy\BossSystem.h" />
+    <ClInclude Include="..\Source\Sandbox\Systems\Enemy\EnemyAttackSystem.h" />
     <ClInclude Include="..\Source\Sandbox\Systems\Enemy\EnemyFactory.h" />
     <ClInclude Include="..\Source\Sandbox\Systems\Enemy\EnemyMoveSystem.h" />
     <ClInclude Include="..\Source\Sandbox\Systems\Enemy\EnemyUISystem.h" />
@@ -213,6 +213,7 @@
     <ClInclude Include="..\Source\Sandbox\Systems\Player\PlayerFocusSystem.h" />
     <ClInclude Include="..\Source\Sandbox\Systems\Player\PlayerHUDSystem.h" />
     <ClInclude Include="..\Source\Sandbox\Systems\Player\PlayerMoveSystem.h" />
+    <ClInclude Include="..\Source\Sandbox\Systems\Player\PlayerVisualSystem.h" />
     <ClInclude Include="..\Source\Sandbox\Systems\SceneFlow\GameDirectorSystem.h" />
     <ClInclude Include="..\Source\Sandbox\Systems\SceneFlow\ResultSystem.h" />
     <ClInclude Include="..\Source\Sandbox\Systems\SceneFlow\StageSelectSystem.h" />

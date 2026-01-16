@@ -214,6 +214,7 @@ namespace Arche
 			else
 			{
 				// Play停止 (共通処理呼び出し)
+				AudioManager::Instance().StopBGM();
 				StopPlayMode(world, ctx, m_playModeEnvBackup);
 				m_needSkyboxRestore = true;
 			}
@@ -280,6 +281,7 @@ namespace Arche
 				if (ImGui::Button("Stop"))
 				{
 					// Play停止 (共通処理呼び出し)
+					AudioManager::Instance().StopBGM();
 					StopPlayMode(world, ctx, m_playModeEnvBackup);
 					m_needSkyboxRestore = true;
 				}

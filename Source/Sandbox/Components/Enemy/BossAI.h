@@ -5,15 +5,15 @@ namespace Arche {
 
 	enum class BossState {
 		Idle,		// 待機・移動
-		Attack_A,	// パターンA (例: 砲撃)
-		Attack_B,	// パターンB (例: 突進/回転)
+		Attack_A,	// パターンA
+		Attack_B,	// パターンB
 		Attack_Ult, // 必殺技
-		Stunned		// 部位破壊時の硬直
+		Stunned		// 硬直
 	};
 
 	struct BossAI
 	{
-		std::string bossName = ""; // "Tank", "Omega" 等
+		std::string bossName = "";
 		BossState state = BossState::Idle;
 
 		float stateTimer = 0.0f;
@@ -22,6 +22,10 @@ namespace Arche {
 		// 攻撃用パラメータ
 		int shotCount = 0;
 		float phaseTimer = 0.0f;
+
+		// ★追加: 複雑なパターンのための制御変数
+		int patternStep = 0;      // 攻撃内の段階 (例: 溜め->発射->後隙)
+		float secondaryTimer = 0.0f; // サブタイマー
 
 		BossAI() = default;
 	};
