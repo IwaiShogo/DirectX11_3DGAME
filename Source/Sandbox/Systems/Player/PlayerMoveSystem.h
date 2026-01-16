@@ -1,121 +1,124 @@
 ﻿#pragma once
-
-// ===== インクルード =====
 #include "Engine/Scene/Core/ECS/ECS.h"
-#include "Engine/Scene/Components/Components.h"
 #include "Engine/Core/Window/Input.h"
-
-#include "Sandbox/Components/Player/PlayerMoveData.h"
 #include "Sandbox/Components/Player/PlayerController.h"
+#include "Sandbox/Components/Player/PlayerMoveData.h"
+#include "Sandbox/Systems/Game/FieldSystem.h"
+#include <cmath>
+#include <DirectXMath.h>
+
+using namespace DirectX;
 
 namespace Arche
 {
 	class PlayerMoveSystem : public ISystem
 	{
 	public:
-		PlayerMoveSystem()
-		{
-			m_systemName = "PlayerMoveSystem";
-		}
+		PlayerMoveSystem() { m_systemName = "PlayerMoveSystem"; m_group = SystemGroup::PlayOnly; }
 
-		void Update(Registry& registry) override
+		void Update(Registry& reg) override
 		{
 			float dt = Time::DeltaTime();
 
-			// 1. カメラの基準方向を取得
-			// (カメラが回転していても、操作は見た目通りにするため)
-			XMVECTOR camForward = XMVectorSet(0, 0, 1, 0);
-			XMVECTOR camRight = XMVectorSet(1, 0, 0, 0);
-
-			auto cameras = registry.view<Camera, Transform>();
-			for (auto e : cameras)
-			{
-				auto& t = cameras.get<Transform>(e);
-				// カメラの回転行列
-				XMMATRIX camRot = XMMatrixRotationRollPitchYaw(
-					XMConvertToRadians(t.rotation.x),
-					XMConvertToRadians(t.rotation.y),
-					0.0f);
-
-				camForward = XMVector3TransformCoord(XMVectorSet(0, 0, 1, 0), camRot);
-				camRight = XMVector3TransformCoord(XMVectorSet(1, 0, 0, 0), camRot);
-
-				// 水平移動のみにしたいのでY成分を消して正規化
-				camForward = XMVector3Normalize(XMVectorSetY(camForward, 0.0f));
-				camRight = XMVector3Normalize(XMVectorSetY(camRight, 0.0f));
-				break; // メインカメラ1つだけと想定
+			// フィールド情報取得
+			float fieldRadius = 20.0f;
+			float floorY = -2.0f;
+			for (auto e : reg.view<FieldProperties>()) {
+				auto& p = reg.get<FieldProperties>(e);
+				fieldRadius = p.radius;
+				floorY = p.floorHeight;
+				break;
 			}
 
-			// 2. プレイヤーの制御
-			auto view = registry.view<PlayerMoveData, PlayerController, Rigidbody, Transform>();
-			for (auto entity : view)
+			auto view = reg.view<PlayerController, Transform, Rigidbody>();
+			for (auto e : view)
 			{
-				auto& moveData = view.get<PlayerMoveData>(entity);
-				auto& ctrl = view.get<PlayerController>(entity);
-				auto& rb = view.get<Rigidbody>(entity);
-				auto& trans = view.get<Transform>(entity);
+				auto& t = reg.get<Transform>(e);
+				auto& move = reg.get<Rigidbody>(e);
 
-				if (ctrl.state == PlayerState::Dash || ctrl.state == PlayerState::Drift)
-				{
-					continue;
+				// --- 入力受付 (キーボード & コントローラー) ---
+				float inputX = 0.0f;
+				float inputZ = 0.0f;
+
+				// キーボード
+				if (Input::GetKey('W')) inputZ += 1.0f;
+				if (Input::GetKey('S')) inputZ -= 1.0f;
+				if (Input::GetKey('A')) inputX -= 1.0f;
+				if (Input::GetKey('D')) inputX += 1.0f;
+
+				// コントローラー (左スティック)
+				float stickX = Input::GetAxis(Axis::Horizontal);
+				float stickY = Input::GetAxis(Axis::Vertical);
+				if (fabs(stickX) > 0.1f) inputX = stickX;
+				if (fabs(stickY) > 0.1f) inputZ = stickY;
+
+				// ベクトル正規化
+				float len = sqrt(inputX * inputX + inputZ * inputZ);
+				if (len > 1.0f) { inputX /= len; inputZ /= len; } // 1.0を超えないように（スティック対策）
+
+				// --- 移動計算 ---
+				float accel = 50.0f;
+				float drag = 10.0f;
+				// ダッシュ (Shift or ボタンB)
+				if (Input::GetKey(VK_SHIFT) || Input::GetButton(Button::B)) accel *= 1.8f;
+
+				// 速度加算
+				move.velocity.x += inputX * accel * dt;
+				move.velocity.z += inputZ * accel * dt;
+
+				// 摩擦（減衰）
+				move.velocity.x -= move.velocity.x * drag * dt;
+				move.velocity.z -= move.velocity.z * drag * dt;
+
+				// 座標更新
+				t.position.x += move.velocity.x * dt;
+				t.position.z += move.velocity.z * dt;
+
+				// --- 向き更新 ---
+				if (len > 0.1f) {
+					float targetAngle = atan2f(inputX, inputZ);
+					float curAngle = t.rotation.y;
+					float diff = targetAngle - curAngle;
+					// 角度補間
+					while (diff < -XM_PI) diff += XM_2PI;
+					while (diff > XM_PI) diff -= XM_2PI;
+					t.rotation.y += diff * dt * 15.0f; // 素早く向く
 				}
 
-				// --- 入力取得 ---
-				float h = Input::GetAxis(Axis::Horizontal);
-				float v = Input::GetAxis(Axis::Vertical);
-
-				// --- 移動ベクトル計算 ---
-				XMVECTOR moveDir = (camForward * v) + (camRight * h);
-				float inputLen = XMVector3LengthSq(moveDir).m128_f32[0];
-
-				if (inputLen > 0.01f)
-				{
-					moveDir = XMVector3Normalize(moveDir);
-
-					// 現在の進行方向を保存
-					XMStoreFloat3(&ctrl.moveDirection, moveDir);
-
-					// ダッシュ判定 (Shiftキー)
-					bool isRunning = Input::GetKey(VK_SHIFT) || Input::GetButton(Button::LShoulder);
-					float speed = isRunning ? moveData.runSpeed : moveData.walkSpeed;
-
-					// 速度適用 (Y軸＝重力は維持するため、XとZだけ書き換える)
-					XMVECTOR velocity = moveDir * speed;
-					rb.velocity.x = velocity.m128_f32[0];
-					rb.velocity.z = velocity.m128_f32[2];
-
-					// --- 回転（進行方向を向く）---
-					float targetAngle = XMConvertToDegrees(atan2f(rb.velocity.x, rb.velocity.z));
-
-					// 現在の角度とターゲット角度の差分を計算してスムーズに補間
-					float currentAngle = trans.rotation.y;
-					float angleDiff = targetAngle - currentAngle;
-
-					// -180~180に正規化
-					while (angleDiff > 180.0f) angleDiff -= 360.0f;
-					while (angleDiff < -180.0f) angleDiff += 360.0f;
-
-					trans.rotation.y += angleDiff * moveData.rotationSpeed * dt;
-					ctrl.state = PlayerState::Run;
+				// --- 重力 ---
+				// ジャンプ (Space or ボタンA)
+				if (t.position.y <= floorY + 0.1f && (Input::GetKeyDown(VK_SPACE) || Input::GetButtonDown(Button::A))) {
+					move.velocity.y = 15.0f;
 				}
-				else
-				{
-					// 入力なし：即座に停止（慣性を残したい場合はここを調整）
-					rb.velocity.x = 0.0f;
-					rb.velocity.z = 0.0f;
-					ctrl.state = PlayerState::Idle;
+				move.velocity.y -= 40.0f * dt;
+				t.position.y += move.velocity.y * dt;
+
+				// --- 衝突判定: 床 ---
+				if (t.position.y < floorY) {
+					t.position.y = floorY;
+					move.velocity.y = 0;
 				}
 
-				// --- ジャンプ ---
-				if (Input::GetButtonDown(Button::A) && rb.isGrounded)
-				{
-					rb.velocity.y = moveData.jumpPower;
-					rb.isGrounded = false; // 接地フラグ解除（物理システム側で再判定されるまで）
+				// --- 衝突判定: 壁 ---
+				float distSq = t.position.x * t.position.x + t.position.z * t.position.z;
+				float limitR = fieldRadius - 1.0f;
+				if (distSq > limitR * limitR) {
+					float dist = sqrt(distSq);
+					float pushX = -t.position.x / dist;
+					float pushZ = -t.position.z / dist;
+					t.position.x = -pushX * limitR;
+					t.position.z = -pushZ * limitR;
+
+					// 壁ずり
+					float dot = move.velocity.x * pushX + move.velocity.z * pushZ;
+					if (dot < 0) {
+						move.velocity.x -= pushX * dot;
+						move.velocity.z -= pushZ * dot;
+					}
 				}
 			}
 		}
 	};
-}	// namespace Arche
-
+}
 #include "Engine/Scene/Serializer/SystemRegistry.h"
 ARCHE_REGISTER_SYSTEM(Arche::PlayerMoveSystem, "PlayerMoveSystem")

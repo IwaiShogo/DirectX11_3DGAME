@@ -179,7 +179,7 @@
                 "Enabled": true,
                 "position": [
                     0.0,
-                    0.0,
+                    -1.0,
                     0.0
                 ],
                 "rotation": [
@@ -508,10 +508,6 @@
             "Name": "Audio System"
         },
         {
-            "Group": 1,
-            "Name": "EnemySpawnSystem"
-        },
-        {
             "Group": 0,
             "Name": "GeometricRenderSystem"
         },
@@ -561,7 +557,11 @@
         },
         {
             "Group": 1,
-            "Name": "GameLifecycleSystem"
+            "Name": "GameDirectorSystem"
+        },
+        {
+            "Group": 1,
+            "Name": "BossSystem"
         }
     ]
 }

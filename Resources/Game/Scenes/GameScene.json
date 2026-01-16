@@ -7,8 +7,7 @@
                 "Enabled": true,
                 "children": [
                     2,
-                    3,
-                    5
+                    3
                 ],
                 "parent": 4294967295
             },
@@ -45,7 +44,7 @@
             "Relationship": {
                 "Enabled": true,
                 "children": [
-                    7
+                    5
                 ],
                 "parent": 1
             },
@@ -83,124 +82,6 @@
                 "Enabled": true,
                 "children": [
                     4
-                ],
-                "parent": 1
-            },
-            "Tag": {
-                "Enabled": true,
-                "componentOrder": [
-                    "Transform"
-                ],
-                "name": "@Environment Root",
-                "tag": "Untagged"
-            },
-            "Transform": {
-                "Enabled": true,
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "Collider": {
-                "Enabled": true,
-                "boxSize": [
-                    50.0,
-                    1.0,
-                    50.0
-                ],
-                "height": 1.0,
-                "isTrigger": false,
-                "layer": 1,
-                "offset": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "radius": 0.5,
-                "type": 0
-            },
-            "GeometricDesign": {
-                "Enabled": true,
-                "color": [
-                    0.32046329975128174,
-                    0.32046329975128174,
-                    0.32046329975128174,
-                    1.0
-                ],
-                "flashTimer": 0.0,
-                "isWireframe": false,
-                "pulseSpeed": 0.0,
-                "shapeType": 0,
-                "size": [
-                    50.0,
-                    1.0,
-                    50.0
-                ]
-            },
-            "ID": 4,
-            "IsActive": true,
-            "Relationship": {
-                "Enabled": true,
-                "children": [],
-                "parent": 3
-            },
-            "Rigidbody": {
-                "Enabled": true,
-                "drag": 0.10000000149011612,
-                "mass": 1.0,
-                "type": 0,
-                "useGravity": true
-            },
-            "Tag": {
-                "Enabled": true,
-                "componentOrder": [
-                    "Transform",
-                    "Collider",
-                    "Rigidbody",
-                    "GeometricDesign"
-                ],
-                "name": "Ground",
-                "tag": "Untagged"
-            },
-            "Transform": {
-                "Enabled": true,
-                "position": [
-                    0.0,
-                    -1.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "ID": 5,
-            "IsActive": true,
-            "Relationship": {
-                "Enabled": true,
-                "children": [
-                    6
                 ],
                 "parent": 1
             },
@@ -268,7 +149,7 @@
                     1.0
                 ]
             },
-            "ID": 6,
+            "ID": 4,
             "IsActive": true,
             "PlayerController": {
                 "Enabled": true,
@@ -291,15 +172,15 @@
             },
             "PlayerTime": {
                 "Enabled": true,
-                "currentTime": 5.0,
+                "currentTime": 100.0,
                 "invincibilityTimer": 0.0,
                 "isDead": false,
-                "maxTime": 5.0
+                "maxTime": 100.0
             },
             "Relationship": {
                 "Enabled": true,
                 "children": [],
-                "parent": 5
+                "parent": 3
             },
             "Rigidbody": {
                 "Enabled": true,
@@ -369,7 +250,7 @@
                 "radius": 0.5,
                 "type": 0
             },
-            "ID": 7,
+            "ID": 5,
             "IsActive": true,
             "Relationship": {
                 "Enabled": true,
@@ -562,6 +443,10 @@
         {
             "Group": 1,
             "Name": "BossSystem"
+        },
+        {
+            "Group": 1,
+            "Name": "FieldSystem"
         }
     ]
 }

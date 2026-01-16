@@ -152,5 +152,8 @@
     <ClInclude Include="..\Source\Sandbox\Systems\Enemy\BossSystem.h">
       <Filter>Source\Systems\Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\Game\FieldSystem.h">
+      <Filter>Source\Systems\Game</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

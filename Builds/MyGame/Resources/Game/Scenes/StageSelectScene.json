@@ -1,5 +1,44 @@
 {
-    "Entities": [],
+    "Entities": [
+        {
+            "Camera": {
+                "Enabled": true,
+                "aspect": 1.7777777910232544,
+                "farZ": 1000.0,
+                "fov": 0.7853981852531433,
+                "nearZ": 0.10000000149011612
+            },
+            "ID": 1,
+            "IsActive": true,
+            "Tag": {
+                "Enabled": true,
+                "componentOrder": [
+                    "Transform",
+                    "Camera"
+                ],
+                "name": "Entity",
+                "tag": "Untagged"
+            },
+            "Transform": {
+                "Enabled": true,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        }
+    ],
     "Environment": {
         "AmbientColor": [
             1.0,
@@ -81,12 +120,12 @@
             "Name": "Audio System"
         },
         {
-            "Group": 0,
-            "Name": "Button System"
-        },
-        {
             "Group": 1,
             "Name": "StageSelectSystem"
+        },
+        {
+            "Group": 0,
+            "Name": "GeometricRenderSystem"
         }
     ]
 }

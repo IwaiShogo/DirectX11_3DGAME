@@ -1,6 +1,4 @@
 ﻿#pragma once
-
-// ===== インクルード =====
 #include "Engine/Scene/Core/ECS/ECS.h"
 #include "Engine/Scene/Core/SceneManager.h"
 #include "Engine/Scene/Core/SceneTransition.h"
@@ -8,85 +6,78 @@
 #include "Engine/Core/Window/Input.h"
 #include "Sandbox/Components/Visual/GeometricDesign.h"
 #include "Sandbox/Core/GameSession.h"
+#include <algorithm>
+#include <cmath>
+#include <vector>
+#include <string>
 
 namespace Arche
 {
-	// --------------------------------------------------------------------------
-	// 演出用データ
-	// --------------------------------------------------------------------------
+	// 初期化判定用のタグ
+	struct TitleSceneTag {};
+
 	struct TitleComponents
 	{
-		bool isInitialized = false;
 		bool isWarping = false;
 		float stateTimer = 0.0f;
 
 		Entity camera = NullEntity;
 
-		// ロゴ（3層構造）
 		struct GlitchLayer { Entity e; XMFLOAT4 baseColor; };
 		std::vector<GlitchLayer> logoLayers;
 
-		// UI
 		Entity pressText = NullEntity;
 		Entity pressBg = NullEntity;
 		Entity scoreText = NullEntity;
 
-		// 背景: サイバー・テライン（波打つ地形・床）
 		struct TerrainBar { Entity e; float x, z; };
 		std::vector<TerrainBar> terrainBars;
 
-		// ★復活: トンネルオブジェクト（中央から迫ってくるランダムな物体）
 		struct TunnelObj { Entity e; float z; float rotSpeed; int type; };
 		std::vector<TunnelObj> tunnelObjs;
 
-		// 背景: 星
 		struct Star { Entity e; float speed; float z; };
 		std::vector<Star> stars;
 
-		// エフェクト: エネルギースフィア
 		Entity energyCore = NullEntity;
 	};
 
-	// --------------------------------------------------------------------------
-	// タイトル画面システム "5 SECONDS - Hyper Warp"
-	// --------------------------------------------------------------------------
 	class TitleSystem : public ISystem
 	{
 	public:
-		TitleSystem()
-		{
-			m_systemName = "TitleSystem";
-			m_group = SystemGroup::PlayOnly;
-		}
+		TitleSystem() { m_systemName = "TitleSystem"; m_group = SystemGroup::PlayOnly; }
 
 		void Update(Registry& registry) override
 		{
 			static TitleComponents ctx;
 
-			if (!ctx.isInitialized) {
+			// ★ 修正箇所: 範囲for文でタグの存在を確認
+			bool isInitialized = false;
+			for (auto e : registry.view<TitleSceneTag>()) {
+				isInitialized = true;
+				break;
+			}
+
+			if (!isInitialized)
+			{
+				ctx = TitleComponents(); // データをリセット
 				InitializeScene(registry, ctx);
-				ctx.isInitialized = true;
+
+				// 初期化済みタグを生成
+				registry.emplace<TitleSceneTag>(registry.create());
 			}
 
 			float dt = Time::DeltaTime();
 			float time = Time::TotalTime();
 			if (ctx.isWarping) ctx.stateTimer += dt;
 
-			// ワープ係数
 			float warpFactor = std::min(ctx.stateTimer / 1.5f, 1.0f);
-
-			// ベーススピード（通常時でも少し速くして疾走感を出す）
 			float baseSpeed = ctx.isWarping ? 100.0f : 15.0f;
 
-			// テーマカラー
-			XMFLOAT4 themeColor = { 0.0f, 1.0f, 1.0f, 1.0f }; // Cyan
-			if (ctx.isWarping) {
-				themeColor = { 1.0f, 1.0f - warpFactor, 1.0f, 1.0f }; // Orange -> White
-			}
+			XMFLOAT4 themeColor = { 0.0f, 1.0f, 1.0f, 1.0f };
+			if (ctx.isWarping) themeColor = { 1.0f, 1.0f - warpFactor, 1.0f, 1.0f };
 
-			// =============================================================
-			// 1. 無限トンネル (ランダムな物体が迫ってくる)
-			// =============================================================
+			// 1. トンネル
 			float tunnelLength = 100.0f;
 			for (auto& obj : ctx.tunnelObjs)
 			{
@@ -95,41 +86,30 @@ namespace Arche
 					auto& t = registry.get<Transform>(obj.e);
 					auto& geo = registry.get<GeometricDesign>(obj.e);
 
-					// 手前に移動
 					obj.z -= baseSpeed * dt;
-
-					// ループ処理
 					if (obj.z < -15.0f) {
 						obj.z += tunnelLength;
-						// 戻ったときに位置を再ランダム化して飽きさせない
 						t.position.x = ((rand() % 400) / 10.0f) - 20.0f;
 						t.position.y = ((rand() % 400) / 10.0f) - 20.0f;
-						// 中央付近は空ける（ロゴが見えるように）
-						if (abs(t.position.x) < 5.0f && abs(t.position.y) < 5.0f) {
-							t.position.x += 10.0f;
-						}
+						if (abs(t.position.x) < 5.0f && abs(t.position.y) < 5.0f) t.position.x += 10.0f;
 					}
-
 					t.position.z = obj.z;
-
-					// 回転
 					t.rotation.z += obj.rotSpeed * dt * (1.0f + warpFactor * 5.0f);
 					t.rotation.x += obj.rotSpeed * 0.5f * dt;
 
-					// 距離フォグ & ビート点滅
-					float distAlpha = std::clamp(1.0f - (abs(obj.z) / 80.0f), 0.0f, 1.0f);
-					float beat = 1.0f + 0.2f * sinf(time * 8.0f); // 音楽のようなビート
+					float distAlpha = 1.0f - (abs(obj.z) / 80.0f);
+					distAlpha = std::clamp(distAlpha, 0.0f, 1.0f);
+
+					float beat = 1.0f + 0.2f * sinf(time * 8.0f);
 
 					t.scale = { 2.0f * beat, 2.0f * beat, 2.0f * beat };
-					if (ctx.isWarping) t.scale = { 1.0f, 1.0f, 20.0f }; // ワープ時は伸びる
+					if (ctx.isWarping) t.scale = { 1.0f, 1.0f, 20.0f };
 
 					geo.color = { themeColor.x, themeColor.y, themeColor.z, distAlpha * 0.8f };
 				}
 			}
 
-			// =============================================================
-			// 2. 地形アニメーション (床)
-			// =============================================================
+			// 2. 地形
 			float scroll = time * (ctx.isWarping ? 20.0f : 2.0f);
 			for (auto& bar : ctx.terrainBars)
 			{
@@ -137,24 +117,18 @@ namespace Arche
 				{
 					auto& t = registry.get<Transform>(bar.e);
 					auto& geo = registry.get<GeometricDesign>(bar.e);
-
 					float noise = sinf(bar.x * 0.2f + scroll) + cosf(bar.z * 0.2f + scroll * 0.7f);
 					float height = 2.0f + noise * 1.5f;
 					if (ctx.isWarping) height *= (1.0f + warpFactor * 2.0f);
-
 					t.scale.y = height;
-					t.position.y = -10.0f + height * 0.5f; // トンネルの邪魔にならないよう少し下げる
-
+					t.position.y = -10.0f + height * 0.5f;
 					float intensity = (height / 5.0f);
 					geo.color = { themeColor.x * intensity, 0.0f, themeColor.z * intensity, 0.5f };
 				}
 			}
 
-			// =============================================================
-			// 3. グリッチ・ロゴ "5 SECONDS"
-			// =============================================================
+			// 3. ロゴ
 			bool doGlitch = (fmod(time, 4.0f) < 0.1f) || ctx.isWarping;
-
 			for (int i = 0; i < ctx.logoLayers.size(); ++i)
 			{
 				auto& layer = ctx.logoLayers[i];
@@ -162,24 +136,19 @@ namespace Arche
 				{
 					auto& t = registry.get<Transform>(layer.e);
 					auto& txt = registry.get<TextComponent>(layer.e);
-
 					float baseX = 0.0f;
 					float baseY = 1.5f + sinf(time * 0.8f) * 0.1f;
 
-					if (doGlitch)
-					{
+					if (doGlitch) {
 						t.position.x = baseX + ((rand() % 100) / 500.0f - 0.1f);
 						t.position.y = baseY + ((rand() % 100) / 500.0f - 0.1f);
-						if (i == 1) txt.color = { 0,1,1,0.8f };
-						else if (i == 2) txt.color = { 1,0,0,0.8f };
+						if (i == 1) txt.color = { 0,1,1,0.8f }; else if (i == 2) txt.color = { 1,0,0,0.8f };
 					}
-					else
-					{
+					else {
 						float drift = (i == 0) ? 0 : (i == 1 ? 0.01f : -0.01f);
 						t.position = { baseX + drift, baseY, 0.0f };
 						txt.color = layer.baseColor;
 					}
-
 					if (ctx.isWarping) {
 						t.scale = { 1.0f + warpFactor * 3.0f, 1.0f + warpFactor * 3.0f, 1.0f };
 						txt.color.w = std::max(0.0f, 1.0f - warpFactor);
@@ -187,61 +156,38 @@ namespace Arche
 				}
 			}
 
-			// =============================================================
-			// 4. UI配置 (被り修正)
-			// =============================================================
-
-			// PRESS SPACE (枠付き)
+			// 4. UI
 			if (registry.valid(ctx.pressText))
 			{
 				auto& t = registry.get<Transform>(ctx.pressText);
-				auto& txt = registry.get<TextComponent>(ctx.pressText);
-
-				// ★修正: Y座標を -1.0 に設定
 				t.position = { 0, -1.0f, -3.0f };
-
 				float alpha = 0.7f + 0.3f * sinf(time * 8.0f);
 				if (ctx.isWarping) alpha = 0.0f;
-				txt.color = { 1.0f, 1.0f, 1.0f, alpha };
+				registry.get<TextComponent>(ctx.pressText).color = { 1.0f, 1.0f, 1.0f, alpha };
 
-				// 背景
 				if (registry.valid(ctx.pressBg)) {
 					auto& bgT = registry.get<Transform>(ctx.pressBg);
 					bgT.position = { t.position.x, t.position.y, t.position.z + 0.01f };
 					registry.get<GeometricDesign>(ctx.pressBg).color = { 0, 0, 0, alpha * 0.6f };
 				}
 			}
-
-			// HIGHSCORE (位置調整)
 			if (registry.valid(ctx.scoreText))
 			{
-				auto& t = registry.get<Transform>(ctx.scoreText);
-				auto& txt = registry.get<TextComponent>(ctx.scoreText);
-
-				// ★修正: Y座標を -2.5 に下げ、少し手前(-3.0)に持ってくることで重なり回避
-				// またフォントサイズを少し小さくします
-				t.position = { 0, -2.5f, -3.0f };
-
-				if (ctx.isWarping) txt.color.w = 0.0f;
+				registry.get<Transform>(ctx.scoreText).position = { 0, -2.5f, -3.0f };
+				if (ctx.isWarping) registry.get<TextComponent>(ctx.scoreText).color.w = 0.0f;
 			}
 
-			// =============================================================
-			// 5. エネルギースフィア (背景)
-			// =============================================================
+			// 5. エフェクト
 			if (registry.valid(ctx.energyCore))
 			{
 				auto& t = registry.get<Transform>(ctx.energyCore);
-				t.position = { 0, 2.0f, 40.0f };
 				t.rotation.y += dt * 5.0f;
 				float scale = 15.0f + sinf(time) * 1.0f + warpFactor * 50.0f;
 				t.scale = { scale, scale, scale };
-				auto& geo = registry.get<GeometricDesign>(ctx.energyCore);
-				geo.color = { themeColor.x, 0.0f, themeColor.z, 0.3f };
+				registry.get<GeometricDesign>(ctx.energyCore).color = { themeColor.x, 0.0f, themeColor.z, 0.3f };
 			}
 
-			// =============================================================
 			// 6. 星
-			// =============================================================
 			for (auto& star : ctx.stars) {
 				if (registry.valid(star.e)) {
 					auto& t = registry.get<Transform>(star.e);
@@ -251,20 +197,15 @@ namespace Arche
 				}
 			}
 
-			// =============================================================
-			// 7. カメラ (固定)
-			// =============================================================
+			// 7. カメラ
 			if (registry.valid(ctx.camera))
 			{
 				auto& t = registry.get<Transform>(ctx.camera);
 				float shake = ctx.isWarping ? (rand() % 100 / 200.0f) : sinf(time * 0.5f) * 0.05f;
 				t.position = { shake, 1.0f + shake, -12.0f };
-				t.rotation = { 0, 0, 0 };
 			}
 
-			// =============================================================
-			// 8. 遷移
-			// =============================================================
+			// 遷移
 			if (!ctx.isWarping && (Input::GetKeyDown(VK_SPACE) || Input::GetButtonDown(Button::A)))
 			{
 				ctx.isWarping = true;
@@ -273,12 +214,6 @@ namespace Arche
 
 			if (ctx.isWarping && ctx.stateTimer > 1.2f)
 			{
-				ctx.isInitialized = false;
-				ctx.terrainBars.clear();
-				ctx.tunnelObjs.clear(); // クリア
-				ctx.stars.clear();
-				ctx.logoLayers.clear();
-
 				SceneManager::Instance().LoadScene("Resources/Game/Scenes/StageSelectScene.json", new FadeTransition(0.5f, { 1,1,1,1 }));
 			}
 		}
@@ -286,27 +221,20 @@ namespace Arche
 	private:
 		void InitializeScene(Registry& reg, TitleComponents& ctx)
 		{
-			// 1. カメラ
+			// カメラ
 			{
-				bool found = false;
-				for (auto e : reg.view<Camera>()) { ctx.camera = e; found = true; break; }
-				if (!found) {
-					ctx.camera = reg.create();
-					reg.emplace<Camera>(ctx.camera);
-					reg.emplace<Transform>(ctx.camera);
-				}
+				ctx.camera = reg.create();
+				reg.emplace<Camera>(ctx.camera);
+				reg.emplace<Transform>(ctx.camera);
 			}
 
-			// 2. ★復活: トンネルオブジェクト (迫ってくるモノ)
-			int tunnelCount = 30;
-			for (int i = 0; i < tunnelCount; ++i)
+			// トンネル
+			for (int i = 0; i < 30; ++i)
 			{
 				Entity e = reg.create();
-				float z = 80.0f - (i * 3.5f); // 手前から奥へ配置
+				float z = 80.0f - (i * 3.5f);
 				float x = ((rand() % 400) / 10.0f) - 20.0f;
 				float y = ((rand() % 400) / 10.0f) - 20.0f;
-
-				// 中央（ロゴエリア）は避ける
 				if (abs(x) < 5.0f && abs(y) < 5.0f) x += 10.0f;
 
 				reg.emplace<Transform>(e).position = { x, y, z };
@@ -314,10 +242,7 @@ namespace Arche
 
 				auto& geo = reg.emplace<GeometricDesign>(e);
 				int type = rand() % 3;
-				if (type == 0) geo.shapeType = GeoShape::Cube;
-				else if (type == 1) geo.shapeType = GeoShape::Diamond;
-				else geo.shapeType = GeoShape::Torus;
-
+				geo.shapeType = (type == 0) ? GeoShape::Cube : (type == 1 ? GeoShape::Diamond : GeoShape::Torus);
 				geo.isWireframe = true;
 				geo.color = { 0, 1, 1, 1 };
 
@@ -326,7 +251,7 @@ namespace Arche
 				ctx.tunnelObjs.push_back(obj);
 			}
 
-			// 3. 地形バー (床)
+			// 地形
 			int rows = 25; int cols = 30; float spacing = 2.0f;
 			for (int z = 0; z < rows; ++z) {
 				for (int x = -cols / 2; x < cols / 2; ++x) {
@@ -344,7 +269,7 @@ namespace Arche
 				}
 			}
 
-			// 4. 星
+			// 星
 			for (int i = 0; i < 60; ++i) {
 				Entity e = reg.create();
 				reg.emplace<Transform>(e).position = { ((rand() % 600) / 5.0f) - 60.0f, ((rand() % 400) / 5.0f) - 20.0f, (float)(rand() % 60) };
@@ -355,7 +280,7 @@ namespace Arche
 				ctx.stars.push_back(s);
 			}
 
-			// 5. エネルギースフィア
+			// エネルギーコア
 			{
 				ctx.energyCore = reg.create();
 				reg.emplace<Transform>(ctx.energyCore).position = { 0, 2.0f, 40.0f };
@@ -366,17 +291,12 @@ namespace Arche
 				geo.color = { 1, 0, 1, 0.5f };
 			}
 
-			// 6. ロゴ "5 SECONDS"
+			// ロゴ
 			auto CreateText = [&](const std::string& txt, XMFLOAT4 col) {
 				Entity e = reg.create();
-				reg.emplace<Transform>(e).position = { 0, 1.5f, 0 };
+				reg.emplace<Transform>(e).position = { 0, 10.0f, 0 };
 				auto& t = reg.emplace<TextComponent>(e);
-				t.text = txt;
-				t.fontKey = "Consolas";
-				t.fontSize = 80.0f;
-				t.isBold = true;
-				t.centerAlign = true;
-				t.color = col;
+				t.text = txt; t.fontKey = "Makinas 4 Square"; t.fontSize = 80.0f; t.isBold = true; t.centerAlign = true; t.color = col;
 				TitleComponents::GlitchLayer l; l.e = e; l.baseColor = col;
 				ctx.logoLayers.push_back(l);
 				};
@@ -384,39 +304,28 @@ namespace Arche
 			CreateText("5 SECONDS", { 0,1,1,0.5f });
 			CreateText("5 SECONDS", { 1,0,1,0.5f });
 
-			// 7. UI: PRESS SPACE (位置修正済み)
+			// UI
 			{
 				ctx.pressText = reg.create();
 				reg.emplace<Transform>(ctx.pressText).position = { 0, -1.0f, -3.0f };
 				auto& t = reg.emplace<TextComponent>(ctx.pressText);
-				t.text = "PRESS SPACE";
-				t.fontKey = "Consolas";
-				t.fontSize = 32.0f;
-				t.centerAlign = true;
-				t.color = { 1, 1, 1, 1 };
-				t.isBold = true;
+				t.text = "PRESS SPACE"; t.fontKey = "Makinas 4 Square"; t.fontSize = 32.0f; t.centerAlign = true; t.color = { 1, 1, 1, 1 }; t.isBold = true;
 
 				ctx.pressBg = reg.create();
 				reg.emplace<Transform>(ctx.pressBg).scale = { 4.0f, 0.8f, 0.01f };
 				auto& geo = reg.emplace<GeometricDesign>(ctx.pressBg);
-				geo.shapeType = GeoShape::Cube;
-				geo.color = { 0, 0, 0, 0.5f };
+				geo.shapeType = GeoShape::Cube; geo.color = { 0, 0, 0, 0.5f };
 			}
-
-			// 8. ハイスコア (位置修正済み)
 			{
 				ctx.scoreText = reg.create();
-				// Press Space(-1.0) よりさらに下(-2.5)へ配置
 				reg.emplace<Transform>(ctx.scoreText).position = { 0, -2.5f, -3.0f };
 				auto& t = reg.emplace<TextComponent>(ctx.scoreText);
 				t.text = "HIGHSCORE: " + std::to_string(GameSession::lastScore);
-				t.fontSize = 20.0f; // 少し小さくして控えめに
-				t.centerAlign = true;
-				t.color = { 1.0f, 0.8f, 0.0f, 1.0f };
+				t.fontKey = "Makinas 4 Square";
+				t.fontSize = 20.0f; t.centerAlign = true; t.color = { 1.0f, 0.8f, 0.0f, 1.0f };
 			}
 		}
 	};
-}	// namespace Arche
-
+}
 #include "Engine/Scene/Serializer/SystemRegistry.h"
 ARCHE_REGISTER_SYSTEM(Arche::TitleSystem, "TitleSystem")

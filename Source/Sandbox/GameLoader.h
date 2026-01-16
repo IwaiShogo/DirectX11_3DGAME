@@ -19,6 +19,7 @@
 #include "Sandbox/Systems/Enemy/BossSystem.h"
 #include "Sandbox/Systems/Enemy/EnemyMoveSystem.h"
 #include "Sandbox/Systems/Enemy/EnemyUISystem.h"
+#include "Sandbox/Systems/Game/FieldSystem.h"
 #include "Sandbox/Systems/Player/BulletSystem.h"
 #include "Sandbox/Systems/Player/PlayerActionSystem.h"
 #include "Sandbox/Systems/Player/PlayerFocusSystem.h"

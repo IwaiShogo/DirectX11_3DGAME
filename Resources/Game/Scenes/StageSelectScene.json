@@ -1,22 +1,21 @@
 {
     "Entities": [
         {
-            "Camera": {
-                "Enabled": true,
-                "aspect": 1.7777777910232544,
-                "farZ": 1000.0,
-                "fov": 0.7853981852531433,
-                "nearZ": 0.10000000149011612
-            },
             "ID": 1,
             "IsActive": true,
+            "Relationship": {
+                "Enabled": true,
+                "children": [
+                    2
+                ],
+                "parent": 4294967295
+            },
             "Tag": {
                 "Enabled": true,
                 "componentOrder": [
-                    "Transform",
-                    "Camera"
+                    "Transform"
                 ],
-                "name": "Entity",
+                "name": "@Scene Root",
                 "tag": "Untagged"
             },
             "Transform": {
@@ -28,6 +27,68 @@
                 ],
                 "rotation": [
                     0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "Camera": {
+                "Enabled": true,
+                "aspect": 1.7777777910232544,
+                "farZ": 1000.0,
+                "fov": 0.7853981852531433,
+                "nearZ": 0.10000000149011612
+            },
+            "Collider": {
+                "Enabled": true,
+                "boxSize": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "height": 1.0,
+                "isTrigger": true,
+                "layer": 1,
+                "offset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "radius": 0.5,
+                "type": 1
+            },
+            "ID": 2,
+            "IsActive": true,
+            "Relationship": {
+                "Enabled": true,
+                "children": [],
+                "parent": 1
+            },
+            "Tag": {
+                "Enabled": true,
+                "componentOrder": [
+                    "Transform",
+                    "Camera",
+                    "Collider"
+                ],
+                "name": "Main Camera",
+                "tag": "Untagged"
+            },
+            "Transform": {
+                "Enabled": true,
+                "position": [
+                    0.0,
+                    4.5,
+                    -25.0
+                ],
+                "rotation": [
+                    0.10000000149011612,
                     0.0,
                     0.0
                 ],
@@ -120,12 +181,12 @@
             "Name": "Audio System"
         },
         {
-            "Group": 1,
-            "Name": "StageSelectSystem"
-        },
-        {
             "Group": 0,
             "Name": "GeometricRenderSystem"
+        },
+        {
+            "Group": 1,
+            "Name": "StageSelectSystem"
         }
     ]
 }

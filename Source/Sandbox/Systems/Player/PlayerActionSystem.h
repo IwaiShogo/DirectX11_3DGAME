@@ -1,69 +1,102 @@
 ﻿#pragma once
-
-// ===== インクルード =====
 #include "Engine/Scene/Core/ECS/ECS.h"
-#include "Engine/Scene/Components/Components.h"
 #include "Engine/Core/Window/Input.h"
 #include "Sandbox/Components/Player/PlayerController.h"
+#include "Sandbox/Components/Player/PlayerMoveData.h"
 #include "Sandbox/Components/Visual/GeometricDesign.h"
+#include "Sandbox/Components/Enemy/EnemyStats.h"
+#include "Sandbox/Components/Player/Bullet.h"
+#include "Sandbox/Systems/Core/DamageSystem.h" // AttackAttribute
+#include <cmath>
+#include <DirectXMath.h>
+
+using namespace DirectX;
 
 namespace Arche
 {
+	struct ActionState {
+		float cooldown = 0.0f;
+		float shootCooldown = 0.0f;
+		float dashTimer = 0.0f;
+
+		// エフェクト管理
+		struct Effect { Entity e; float life; float maxLife; };
+		std::vector<Effect> effects;
+	};
+
 	class PlayerActionSystem : public ISystem
 	{
 	public:
-		PlayerActionSystem()
-		{
-			m_systemName = "PlayerActionSystem";
-		}
+		PlayerActionSystem() { m_systemName = "PlayerActionSystem"; m_group = SystemGroup::PlayOnly; }
 
-		void Update(Registry& registry) override
+		void Update(Registry& reg) override
 		{
+			static ActionState state;
 			float dt = Time::DeltaTime();
+			if (state.cooldown > 0) state.cooldown -= dt;
+			if (state.shootCooldown > 0) state.shootCooldown -= dt;
 
-			// プレイヤー処理
-			auto view = registry.view<PlayerController, Transform, Rigidbody>();
-			for (auto entity : view)
+			// プレイヤー取得
+			auto view = reg.view<PlayerController, Transform>();
+			Entity player = NullEntity;
+			for (auto e : view) { player = e; break; }
+			if (player == NullEntity) return;
+
+			auto& t = reg.get<Transform>(player);
+			auto& ctrl = reg.get<PlayerController>(player);
+
+			// --- 入力判定 (Xboxコントローラー & キーボードマウス) ---
+
+			// ロックオン (LB / 右クリック)
+			bool inputLock = Input::GetButton(Button::LShoulder) || Input::GetMouseRightButton();
+
+			// 攻撃 (X / 左クリック)
+			bool inputAttack = Input::GetButton(Button::X) || Input::GetMouseLeftButton();
+
+			// ダッシュ斬り (ロック中に攻撃)
+			bool inputDashCut = inputLock && (Input::GetButtonDown(Button::X) || Input::GetMouseLeftButton());
+
+			// 回転斬り (B / Fキー)
+			bool inputSpin = Input::GetButtonDown(Button::B) || Input::GetKeyDown('F');
+
+			// 衝撃波 (Y / Shift+E)
+			bool inputShock = Input::GetButtonDown(Button::Y) || (Input::GetKey(VK_SHIFT) && Input::GetKeyDown('E'));
+
+			// --- アクション実行 ---
+
+			// 1. ダッシュ斬り (最優先・高リスク・高リターン)
+			if (inputDashCut && state.cooldown <= 0)
 			{
-				auto& ctrl = view.get<PlayerController>(entity);
-				auto& trans = view.get<Transform>(entity);
-				auto& rb = view.get<Rigidbody>(entity);
-
-				// 1. アクション開始判定 (Idle または Run のときのみ)
-				if (ctrl.state == PlayerState::Idle || ctrl.state == PlayerState::Run)
-				{
-					// ダッシュ開始: Bボタン, Rボタン, 右クリックなど
-					if (Input::GetButtonDown(Button::B) || Input::GetButtonDown(Button::RShoulder) || Input::GetMouseRightButton())
-					{
-						StartDash(ctrl, rb);
-					}
-					// 攻撃開始: Xボタン, 左クリック
-					else if (Input::GetButtonDown(Button::X) || Input::GetMouseLeftButton())
-					{
-						ctrl.state = PlayerState::Attack;
-						ctrl.actionTimer = 0.0f;
-						
-						// 弾の発射処理
-						Shoot(registry, trans, ctrl);
-					}
-				}
-
-				// 2. アクション中の更新処理
-				switch (ctrl.state)
-				{
-				case PlayerState::Dash:
-				case PlayerState::Drift:
-					UpdateDash(registry, entity, ctrl, rb, trans, dt);
-					break;
-
-				case PlayerState::Attack:
-					UpdateAttack(ctrl, dt);
-					break;
-				}
+				DoDashCut(reg, t, state);
+				state.cooldown = 0.8f; // 硬直長め
 			}
+			// 2. 衝撃波 (範囲・中リターン)
+			else if (inputShock && state.cooldown <= 0)
+			{
+				DoShockwave(reg, t.position, state);
+				state.cooldown = 1.5f;
+			}
+			// 3. 回転斬り (周囲・標準リターン)
+			else if (inputSpin && state.cooldown <= 0)
+			{
+				DoSpinAttack(reg, t.position, state);
+				state.cooldown = 0.6f;
+			}
+			// 4. 銃撃 (遠距離・低リターン)
+			// ロックオンしていない状態で攻撃ボタン
+			else if (inputAttack && !inputLock && state.shootCooldown <= 0 && state.cooldown <= 0)
+			{
+				Shoot(reg, t, ctrl);
+				state.shootCooldown = 0.12f; // 連射速度
+			}
+
+			// エフェクト更新
+			UpdateEffects(reg, state, dt);
 		}
 
 	private:
+		// --- アクション実装 ---
+
 		void Shoot(Registry& reg, const Transform& playerTrans, const PlayerController& ctrl) // 引数にctrl追加
 		{
 			XMMATRIX world = playerTrans.GetWorldMatrix();
@@ -117,113 +150,150 @@ namespace Arche
 			}
 		}
 
-		void StartDash(PlayerController& ctrl, Rigidbody& rb)
+		// ダッシュ斬り：一気に近づいて切る。ハイリスク・ハイリターン
+		void DoDashCut(Registry& reg, Transform& t, ActionState& state)
 		{
-			ctrl.state = PlayerState::Dash;
-			ctrl.actionTimer = 0.0f;
-			ctrl.isDrifting = false;
+			// 前方へ高速移動
+			XMMATRIX rot = XMMatrixRotationRollPitchYaw(t.rotation.x, t.rotation.y, t.rotation.z);
+			XMVECTOR fwd = XMVector3TransformCoord({ 0, 0, 1 }, rot);
+			XMFLOAT3 fwdDir; XMStoreFloat3(&fwdDir, fwd);
 
-			// 現在の移動方向（入力がなければ前方）へ加速
-			XMVECTOR dir = XMLoadFloat3(&ctrl.moveDirection);
-			if (XMVector3LengthSq(dir).m128_f32[0] < 0.1f)
-			{
-				// 停止中ならZ+方向へ
-				dir = XMVectorSet(0, 0, 1, 0);
-				XMStoreFloat3(&ctrl.moveDirection, dir);
+			float dist = 10.0f;
+			t.position.x += fwdDir.x * dist;
+			t.position.z += fwdDir.z * dist;
+
+			// 通過線上に攻撃判定
+			// 中心座標、半径、ダメージ、回復倍率
+			SpawnHitbox(reg, t.position, 5.0f, 50.0f, 3.0f); // ★回復量: 3倍 (一発逆転)
+
+			// 斬撃エフェクト (残像)
+			for (int i = 0; i < 5; ++i) {
+				XMFLOAT3 p = {
+					t.position.x - fwdDir.x * (i * 2.0f),
+					t.position.y,
+					t.position.z - fwdDir.z * (i * 2.0f)
+				};
+				SpawnEffect(reg, p, GeoShape::Pyramid, { 0, 1, 1, 0.5f }, 0.3f, state);
 			}
-
-			// 初速を与える
-			XMVECTOR vel = dir * ctrl.dashSpeed;
-			rb.velocity.x = vel.m128_f32[0];
-			rb.velocity.z = vel.m128_f32[2];
 		}
 
-		void UpdateDash(Registry& reg, Entity entity, PlayerController& ctrl, Rigidbody& rb, Transform& trans, float dt)
+		// 回転斬り：周囲をなぎ払う
+		void DoSpinAttack(Registry& reg, XMFLOAT3 pos, ActionState& state)
 		{
-			ctrl.actionTimer += dt;
+			SpawnHitbox(reg, pos, 7.0f, 20.0f, 1.0f); // ★回復量: 1倍 (標準)
 
-			// ダッシュ終了
-			if (ctrl.actionTimer >= ctrl.dashDuration)
-			{
-				ctrl.state = PlayerState::Idle;
-				rb.velocity = { 0, rb.velocity.y, 0 }; // 慣性を消して停止
+			// リングエフェクト
+			Entity e = reg.create();
+			reg.emplace<Transform>(e).position = pos;
+			reg.get<Transform>(e).scale = { 1, 0.1f, 1 };
+			auto& g = reg.emplace<GeometricDesign>(e);
+			g.shapeType = GeoShape::Torus;
+			g.color = { 1, 0.5f, 0, 1 }; // オレンジ
+			g.isWireframe = true;
 
-				// 演出リセット
-				if (reg.has<GeometricDesign>(entity))
-				{
-					auto& geo = reg.get<GeometricDesign>(entity);
-					geo.isWireframe = false;
-					geo.pulseSpeed = 0.0f;
+			state.effects.push_back({ e, 0.4f, 0.4f });
+		}
+
+		// 衝撃波：広範囲を吹き飛ばす
+		void DoShockwave(Registry& reg, XMFLOAT3 pos, ActionState& state)
+		{
+			SpawnHitbox(reg, pos, 12.0f, 30.0f, 1.5f); // ★回復量: 1.5倍 (まとめて倒すと美味しい)
+
+			// 球体拡散エフェクト
+			Entity e = reg.create();
+			reg.emplace<Transform>(e).position = pos;
+			reg.get<Transform>(e).scale = { 1, 1, 1 };
+			auto& g = reg.emplace<GeometricDesign>(e);
+			g.shapeType = GeoShape::Sphere;
+			g.color = { 1, 0, 1, 0.5f }; // 紫
+			g.isWireframe = true;
+
+			state.effects.push_back({ e, 0.5f, 0.5f });
+		}
+
+		// --- 補助関数 ---
+
+		// 攻撃判定 (簡易的な範囲判定)
+		void SpawnHitbox(Registry& reg, XMFLOAT3 center, float radius, float damage, float rewardRate)
+		{
+			// 範囲内の敵を検索してダメージを与える
+			auto enemies = reg.view<EnemyStats, Transform>();
+			for (auto e : enemies) {
+				auto& et = reg.get<Transform>(e);
+				float dx = et.position.x - center.x;
+				float dz = et.position.z - center.z;
+
+				if (dx * dx + dz * dz < radius * radius) {
+					// ダメージ適用
+					auto& stats = reg.get<EnemyStats>(e);
+					stats.hp -= damage;
+
+					// ヒットエフェクト
+					SpawnHitParticle(reg, et.position);
+
+					// 撃破処理
+					if (stats.hp <= 0) {
+						float reward = stats.killReward * rewardRate; // 倍率適用
+
+						// 時間回復
+						for (auto p : reg.view<PlayerTime>()) {
+							auto& pt = reg.get<PlayerTime>(p);
+							pt.currentTime += reward;
+							if (pt.currentTime > pt.maxTime) pt.currentTime = pt.maxTime;
+						}
+
+						// スコア加算 (GameSessionへ)
+						GameSession::lastScore += stats.scoreValue;
+
+						// 敵削除
+						reg.destroy(e);
+					}
 				}
-				return;
 			}
+		}
 
-			// --- ドリフト判定 ---
-			// 現在の進行ベクトル(ダッシュ方向)
-			XMVECTOR dashDir = XMLoadFloat3(&ctrl.moveDirection);
+		void SpawnEffect(Registry& reg, XMFLOAT3 pos, GeoShape shape, XMFLOAT4 col, float life, ActionState& state)
+		{
+			Entity e = reg.create();
+			reg.emplace<Transform>(e).position = pos;
+			reg.get<Transform>(e).scale = { 1, 1, 1 };
+			auto& g = reg.emplace<GeometricDesign>(e);
+			g.shapeType = shape; g.color = col; g.isWireframe = true;
+			state.effects.push_back({ e, life, life });
+		}
 
-			// 現在の入力ベクトル
-			float h = Input::GetAxis(Axis::Horizontal);
-			float v = Input::GetAxis(Axis::Vertical);
+		void SpawnHitParticle(Registry& reg, XMFLOAT3 pos) {
+			Entity e = reg.create();
+			reg.emplace<Transform>(e).position = pos;
+			reg.get<Transform>(e).scale = { 0.5f, 0.5f, 0.5f };
+			auto& g = reg.emplace<GeometricDesign>(e);
+			g.shapeType = GeoShape::Cube; g.color = { 1,0,0,1 }; g.isWireframe = true;
+			// ※ゴミが残らないよう別途LifetimeSystemが必要だが、ここでは省略
+		}
 
-			// カメラ補正 (MoveSystemと同様のロジックが必要だが、簡易的に入力そのままで判定)
-			// ※厳密にはカメラ向きを考慮すべきですが、急激な入力変化検知なら生の値でも機能します
-			XMVECTOR inputVec = XMVectorSet(h, 0, v, 0);
-
-			if (XMVector3LengthSq(inputVec).m128_f32[0] > 0.5f)
-			{
-				inputVec = XMVector3Normalize(inputVec);
-
-				// 内積: ダッシュ方向と入力方向のズレを見る
-				// ここでは「カメラ考慮なし」の簡易判定なので、本来はMoveSystemと同じカメラ補正後のベクトルを使うのがベストです
-				// とりあえず「何かしら強い入力」があったらドリフトとみなす簡易版：
-
-				// ドリフト発動条件: ダッシュ後半かつ未発動
-				if (ctrl.actionTimer > ctrl.dashDuration * 0.2f && !ctrl.isDrifting)
-				{
-					// 入力方向へ急旋回（ドリフト）
-					TriggerDriftShockwave(reg, entity);
-					ctrl.isDrifting = true;
-					ctrl.state = PlayerState::Drift;
-
-					// 進行方向を入力方向へ書き換え（鋭角ターン）
-					// ※本来はカメラ補正後のベクトルを入れるべき
-					XMStoreFloat3(&ctrl.moveDirection, inputVec);
-
-					// 速度ベクトルも更新
-					XMVECTOR newVel = inputVec * ctrl.dashSpeed;
-					rb.velocity.x = newVel.m128_f32[0];
-					rb.velocity.z = newVel.m128_f32[2];
+		void UpdateEffects(Registry& reg, ActionState& state, float dt)
+		{
+			for (auto it = state.effects.begin(); it != state.effects.end(); ) {
+				it->life -= dt;
+				if (it->life <= 0) {
+					reg.destroy(it->e);
+					it = state.effects.erase(it);
+				}
+				else {
+					if (reg.valid(it->e)) {
+						auto& t = reg.get<Transform>(it->e);
+						float p = 1.0f - (it->life / it->maxLife);
+						// 急速拡大
+						float s = 1.0f + p * 20.0f;
+						t.scale = { s, s, s };
+						// フェードアウト
+						reg.get<GeometricDesign>(it->e).color.w = it->life / it->maxLife;
+					}
+					++it;
 				}
 			}
-		}
-
-		void UpdateAttack(PlayerController& ctrl, float dt)
-		{
-			ctrl.actionTimer += dt;
-			// 仮：0.5秒で攻撃終了
-			if (ctrl.actionTimer > 0.5f)
-			{
-				ctrl.state = PlayerState::Idle;
-			}
-		}
-
-		void TriggerDriftShockwave(Registry& reg, Entity playerEntity)
-		{
-			Logger::Log("Drift Shockwave!!!");
-
-			// 演出: プレイヤーをワイヤーフレーム化して光らせる
-			if (reg.has<GeometricDesign>(playerEntity))
-			{
-				auto& geo = reg.get<GeometricDesign>(playerEntity);
-				geo.isWireframe = true;
-				geo.flashTimer = 0.5f; // 点滅開始
-			}
-
-			// ここに衝撃波の当たり判定生成ロジックを追加
 		}
 	};
-}	// namespace Arche
-
+}
 #include "Engine/Scene/Serializer/SystemRegistry.h"
 ARCHE_REGISTER_SYSTEM(Arche::PlayerActionSystem, "PlayerActionSystem")

@@ -133,6 +133,7 @@
       <PrecompiledHeaderFile>Engine\pch.h</PrecompiledHeaderFile>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ForcedIncludeFiles>Engine/pch.h</ForcedIncludeFiles>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -161,6 +162,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Engine\pch.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>Engine/pch.h</ForcedIncludeFiles>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -204,6 +206,7 @@
     <ClInclude Include="..\Source\Sandbox\Systems\Enemy\EnemyFactory.h" />
     <ClInclude Include="..\Source\Sandbox\Systems\Enemy\EnemyMoveSystem.h" />
     <ClInclude Include="..\Source\Sandbox\Systems\Enemy\EnemyUISystem.h" />
+    <ClInclude Include="..\Source\Sandbox\Systems\Game\FieldSystem.h" />
     <ClInclude Include="..\Source\Sandbox\Systems\Game\StageData.h" />
     <ClInclude Include="..\Source\Sandbox\Systems\Player\BulletSystem.h" />
     <ClInclude Include="..\Source\Sandbox\Systems\Player\PlayerActionSystem.h" />

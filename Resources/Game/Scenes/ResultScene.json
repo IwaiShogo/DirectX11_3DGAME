@@ -81,12 +81,12 @@
             "Name": "Audio System"
         },
         {
-            "Group": 0,
-            "Name": "Button System"
-        },
-        {
             "Group": 1,
             "Name": "ResultSystem"
+        },
+        {
+            "Group": 0,
+            "Name": "GeometricRenderSystem"
         }
     ]
 }
