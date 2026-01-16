@@ -9,7 +9,7 @@
         ],
         "height": 1.0,
         "isTrigger": false,
-        "layer": 1,
+        "layer": 2,
         "offset": [
             0.0,
             0.0,
@@ -20,9 +20,11 @@
     },
     "EnemyStats": {
         "Enabled": true,
+        "collisionPenalty": 2.0,
         "hp": 10.0,
-        "moveSpeed": 4.0,
-        "recoverAmount": 1.0,
+        "killReward": 3.0,
+        "maxHp": 10.0,
+        "moveSpeed": 3.0,
         "type": 0
     },
     "GeometricDesign": {

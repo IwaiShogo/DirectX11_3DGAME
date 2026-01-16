@@ -40,6 +40,15 @@
     <Filter Include="Source\Systems\Camera">
       <UniqueIdentifier>{4e9455a4-7823-4488-8d35-11214bf88ae8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Core">
+      <UniqueIdentifier>{a808b941-089c-4d3f-9493-588ee965dac0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Systems\SceneFlow">
+      <UniqueIdentifier>{97a960cf-3e60-4bae-95b0-7d5861a42d0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Systems\Game">
+      <UniqueIdentifier>{a20f9ebf-c34a-4741-8644-3bbee56ee382}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Sandbox\main.cpp">
@@ -70,9 +79,6 @@
     </ClInclude>
     <ClInclude Include="..\Source\Sandbox\Systems\Visual\GeometricRenderSystem.h">
       <Filter>Source\Systems\Visual</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Sandbox\Systems\Enemy\EnemySpawnSystem.h">
-      <Filter>Source\Systems\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Sandbox\Components\Player\PlayerMoveData.h">
       <Filter>Source\Components\Player</Filter>
@@ -109,6 +115,42 @@
     </ClInclude>
     <ClInclude Include="..\Source\Sandbox\Components\Visual\FloatingTextAnimation.h">
       <Filter>Source\Components\Visual</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\Player\PlayerFocusSystem.h">
+      <Filter>Source\Systems\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\Enemy\EnemyUISystem.h">
+      <Filter>Source\Systems\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\Player\PlayerHUDSystem.h">
+      <Filter>Source\Systems\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Core\GameSession.h">
+      <Filter>Source\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\SceneFlow\TitleSystem.h">
+      <Filter>Source\Systems\SceneFlow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\SceneFlow\StageSelectSystem.h">
+      <Filter>Source\Systems\SceneFlow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\SceneFlow\ResultSystem.h">
+      <Filter>Source\Systems\SceneFlow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\Game\StageData.h">
+      <Filter>Source\Systems\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\SceneFlow\GameDirectorSystem.h">
+      <Filter>Source\Systems\SceneFlow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Components\Enemy\BossAI.h">
+      <Filter>Source\Components\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\Enemy\EnemyFactory.h">
+      <Filter>Source\Systems\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Sandbox\Systems\Enemy\BossSystem.h">
+      <Filter>Source\Systems\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

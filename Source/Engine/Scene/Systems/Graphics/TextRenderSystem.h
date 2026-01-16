@@ -22,6 +22,7 @@
 
 // ===== インクルード =====
 #include "Engine/Scene/Core/ECS/ECS.h"
+#include "Engine/Scene/Components/Components.h"
 #include "Engine/Renderer/Text/TextRenderer.h"
 
 namespace Arche
@@ -34,6 +35,7 @@ namespace Arche
 		TextRenderSystem()
 		{
 			m_systemName = "Text Render System";
+			m_group = SystemGroup::Overlay;
 		}
 
 		void Update(Registry& registry) override {}
@@ -44,33 +46,37 @@ namespace Arche
 			XMMATRIX proj = XMMatrixIdentity();
 			bool cameraFound = false;
 
+			float currentAspect = static_cast<float>(Config::SCREEN_WIDTH) / static_cast<float>(Config::SCREEN_HEIGHT);
+
 			if (ctx.renderCamera.useOverride)
 			{
-				// エディタ（シーンビュー）やオーバーライド指定時
+				// エディタ（シーンビュー）
 				view = XMLoadFloat4x4(&ctx.renderCamera.viewMatrix);
 				proj = XMLoadFloat4x4(&ctx.renderCamera.projMatrix);
 				cameraFound = true;
 			}
 			else
 			{
-				// ゲームビュー（通常時）: シーン内のカメラコンポーネントを探す
+				// ゲームビュー（通常時）
 				auto cameraView = registry.view<Camera, Transform>();
 				for (auto e : cameraView)
 				{
 					auto& cam = cameraView.get<Camera>(e);
 					auto& t = cameraView.get<Transform>(e);
 
-					// RenderSystem.cppの実装に合わせる（ラジアン変換を行わない）
+					// RenderSystem.cppの実装に合わせる
 					XMVECTOR eye = XMLoadFloat3(&t.position);
 
-					// XMConvertToRadians を削除し、RenderSystemと同じ計算にする
 					XMMATRIX rot = XMMatrixRotationRollPitchYaw(t.rotation.x, t.rotation.y, 0.0f);
 
 					XMVECTOR look = XMVector3TransformCoord(XMVectorSet(0, 0, 1, 0), rot);
 					XMVECTOR up = XMVector3TransformCoord(XMVectorSet(0, 1, 0, 0), rot);
 
 					view = XMMatrixLookToLH(eye, look, up);
+
+					// 修正したアスペクト比を使用
 					proj = XMMatrixPerspectiveFovLH(cam.fov, cam.aspect, cam.nearZ, cam.farZ);
+
 					cameraFound = true;
 					break;
 				}

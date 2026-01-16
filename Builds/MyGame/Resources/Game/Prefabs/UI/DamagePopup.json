@@ -5,17 +5,18 @@
         "fadeSpeed": 1.5,
         "moveSpeedY": 3.0
     },
-    "ID": 12,
+    "ID": 1,
     "Lifetime": {
         "Enabled": true,
-        "time": 0.5239212512969971
+        "time": 1.0
     },
     "Tag": {
         "Enabled": true,
         "componentOrder": [
+            "Transform",
+            "TextComponent",
             "FloatingTextAnimation",
-            "Lifetime",
-            "TextComponent"
+            "Lifetime"
         ],
         "name": "DamagePopup",
         "tag": "UI"
@@ -25,9 +26,9 @@
         "centerAlign": true,
         "color": [
             1.0,
-            0.20000000298023224,
-            0.20000000298023224,
-            0.26087629795074463
+            1.0,
+            1.0,
+            1.0
         ],
         "fontKey": "PixelMplus12",
         "fontSize": 40.0,
@@ -37,14 +38,14 @@
             0.0,
             0.0
         ],
-        "text": "-2"
+        "text": "999"
     },
     "Transform": {
         "Enabled": true,
         "position": [
-            5.7977190017700195,
-            4.768026351928711,
-            2.616034507751465
+            0.0,
+            0.0,
+            0.0
         ],
         "rotation": [
             0.0,

@@ -303,7 +303,7 @@ namespace Arche
 			{"Animation System", SystemGroup::PlayOnly },
 			{ "Render System", SystemGroup::Always }, { "Model Render System", SystemGroup::Always },
 			{ "Billboard System", SystemGroup::Always }, { "Sprite Render System", SystemGroup::Always },
-			{ "Text Render System", SystemGroup::Always }, { "Audio System", SystemGroup::Always },
+			{ "Text Render System", SystemGroup::Overlay }, { "Audio System", SystemGroup::Always },
 			{ "Button System", SystemGroup::Always }
 		};
 		sceneJson["Systems"] = json::array();

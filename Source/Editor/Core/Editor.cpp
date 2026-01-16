@@ -129,7 +129,7 @@ namespace Arche
 			reg.CreateSystem(world, "Model Render System", SystemGroup::Always);
 			reg.CreateSystem(world, "Sprite Render System", SystemGroup::Always);
 			reg.CreateSystem(world, "Billboard System", SystemGroup::Always);
-			reg.CreateSystem(world, "Text Render System", SystemGroup::Always);
+			reg.CreateSystem(world, "Text Render System", SystemGroup::Overlay);
 			reg.CreateSystem(world, "Audio System", SystemGroup::Always);
 			reg.CreateSystem(world, "Button System", SystemGroup::Always);
 		}
@@ -343,7 +343,7 @@ namespace Arche
 		sysReg.CreateSystem(*m_prefabWorld, "Model Render System", SystemGroup::Always);
 		sysReg.CreateSystem(*m_prefabWorld, "Sprite Render System", SystemGroup::Always);
 		sysReg.CreateSystem(*m_prefabWorld, "Billboard System", SystemGroup::Always);
-		sysReg.CreateSystem(*m_prefabWorld, "Text Render System", SystemGroup::Always);
+		sysReg.CreateSystem(*m_prefabWorld, "Text Render System", SystemGroup::Overlay);
 		sysReg.CreateSystem(*m_prefabWorld, "UI System", SystemGroup::Always);
 		sysReg.CreateSystem(*m_prefabWorld, "Hierarchy System", SystemGroup::Always);
 

@@ -1,5 +1,5 @@
 {
     "GameName": "MyGame",
-    "StartScene": "Resources/Game/Scenes/GameScene.json",
+    "StartScene": "Resources\\Game\\Scenes\\TitleScene.json",
     "Version": "1.0.0"
 }

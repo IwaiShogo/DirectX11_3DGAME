@@ -273,14 +273,14 @@ namespace Arche
 			);
 			if (SUCCEEDED(hr))
 			{
-				Logger::Log("Fallback to System Font: " + std::string(fontFamily.begin(), fontFamily.end()));
+				//Logger::Log("Fallback to System Font: " + std::string(fontFamily.begin(), fontFamily.end()));
 			}
 		}
 
 		// C. それでもダメなら「メイリオ」に強制フォールバック
 		if (FAILED(hr))
 		{
-			Logger::LogWarning("Font Not Found. Fallback to Meiryo.");
+			//Logger::LogWarning("Font Not Found. Fallback to Meiryo.");
 			hr = m_dwriteFactory->CreateTextFormat(
 				L"Meiryo", nullptr,
 				DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fontSize, L"ja-jp", &format

@@ -6,9 +6,7 @@
             "Relationship": {
                 "Enabled": true,
                 "children": [
-                    2,
-                    3,
-                    5
+                    2
                 ],
                 "parent": 4294967295
             },
@@ -55,7 +53,7 @@
                     1.0
                 ],
                 "height": 1.0,
-                "isTrigger": false,
+                "isTrigger": true,
                 "layer": 1,
                 "offset": [
                     0.0,
@@ -63,15 +61,13 @@
                     0.0
                 ],
                 "radius": 0.5,
-                "type": 3
+                "type": 1
             },
             "ID": 2,
             "IsActive": true,
             "Relationship": {
                 "Enabled": true,
-                "children": [
-                    7
-                ],
+                "children": [],
                 "parent": 1
             },
             "Tag": {
@@ -81,312 +77,15 @@
                     "Camera",
                     "Collider"
                 ],
-                "name": "@Camera Root",
+                "name": "Main Camera",
                 "tag": "Untagged"
             },
             "Transform": {
                 "Enabled": true,
                 "position": [
-                    -0.31968021392822266,
-                    1.8767445087432861,
-                    -4.984645366668701
-                ],
-                "rotation": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "ID": 3,
-            "IsActive": true,
-            "Relationship": {
-                "Enabled": true,
-                "children": [
-                    4
-                ],
-                "parent": 1
-            },
-            "Tag": {
-                "Enabled": true,
-                "componentOrder": [
-                    "Transform"
-                ],
-                "name": "@Environment Root",
-                "tag": "Untagged"
-            },
-            "Transform": {
-                "Enabled": true,
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "Collider": {
-                "Enabled": true,
-                "boxSize": [
-                    50.0,
-                    1.0,
-                    50.0
-                ],
-                "height": 1.0,
-                "isTrigger": false,
-                "layer": 1,
-                "offset": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "radius": 0.5,
-                "type": 0
-            },
-            "GeometricDesign": {
-                "Enabled": true,
-                "color": [
-                    0.32046329975128174,
-                    0.32046329975128174,
-                    0.32046329975128174,
-                    1.0
-                ],
-                "flashTimer": 0.0,
-                "isWireframe": false,
-                "pulseSpeed": 0.0,
-                "shapeType": 0,
-                "size": [
-                    50.0,
-                    1.0,
-                    50.0
-                ]
-            },
-            "ID": 4,
-            "IsActive": true,
-            "Relationship": {
-                "Enabled": true,
-                "children": [],
-                "parent": 3
-            },
-            "Rigidbody": {
-                "Enabled": true,
-                "drag": 0.10000000149011612,
-                "mass": 1.0,
-                "type": 0,
-                "useGravity": true
-            },
-            "Tag": {
-                "Enabled": true,
-                "componentOrder": [
-                    "Transform",
-                    "Collider",
-                    "Rigidbody",
-                    "GeometricDesign"
-                ],
-                "name": "Ground",
-                "tag": "Untagged"
-            },
-            "Transform": {
-                "Enabled": true,
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "ID": 5,
-            "IsActive": true,
-            "Relationship": {
-                "Enabled": true,
-                "children": [
-                    6
-                ],
-                "parent": 1
-            },
-            "Tag": {
-                "Enabled": true,
-                "componentOrder": [
-                    "Transform"
-                ],
-                "name": "@Player Root",
-                "tag": "Untagged"
-            },
-            "Transform": {
-                "Enabled": true,
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "Collider": {
-                "Enabled": true,
-                "boxSize": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "height": 1.0,
-                "isTrigger": false,
-                "layer": 1,
-                "offset": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "radius": 0.5,
-                "type": 3
-            },
-            "GeometricDesign": {
-                "Enabled": true,
-                "color": [
-                    0.1631908416748047,
-                    1.0,
-                    0.019304990768432617,
-                    1.0
-                ],
-                "flashTimer": 0.0,
-                "isWireframe": false,
-                "pulseSpeed": 0.0,
-                "shapeType": 5,
-                "size": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            },
-            "ID": 6,
-            "IsActive": true,
-            "LifeTimer": {
-                "Enabled": true,
-                "currentTime": 10.0,
-                "isDead": false,
-                "maxTime": 5.0
-            },
-            "PlayerController": {
-                "Enabled": true,
-                "dashSpeed": 25.0,
-                "moveDirection": [
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "state": 0
-            },
-            "PlayerMoveData": {
-                "Enabled": true,
-                "jumpPower": 6.0,
-                "rotationSpeed": 15.0,
-                "runSpeed": 10.0,
-                "walkSpeed": 5.0
-            },
-            "Relationship": {
-                "Enabled": true,
-                "children": [],
-                "parent": 5
-            },
-            "Rigidbody": {
-                "Enabled": true,
-                "drag": 0.10000000149011612,
-                "mass": 1.0,
-                "type": 1,
-                "useGravity": true
-            },
-            "Tag": {
-                "Enabled": true,
-                "componentOrder": [
-                    "Transform",
-                    "Collider",
-                    "Rigidbody",
-                    "PlayerController",
-                    "PlayerMoveData",
-                    "GeometricDesign",
-                    "LifeTimer"
-                ],
-                "name": "Player",
-                "tag": "Player"
-            },
-            "Transform": {
-                "Enabled": true,
-                "position": [
-                    0.0,
-                    3.123953342437744,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    2.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "ID": 7,
-            "IsActive": true,
-            "Relationship": {
-                "Enabled": true,
-                "children": [],
-                "parent": 2
-            },
-            "Tag": {
-                "Enabled": true,
-                "componentOrder": [
-                    "Transform"
-                ],
-                "name": "MainCamera",
-                "tag": "Untagged"
-            },
-            "Transform": {
-                "Enabled": true,
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
+                    -0.6189315915107727,
+                    5.7426438331604,
+                    -6.749195098876953
                 ],
                 "rotation": [
                     0.0,
@@ -426,7 +125,7 @@
             0.800000011920929,
             1.0
         ],
-        "SkyboxTexture": ""
+        "SkyboxTexture": "Resources/Game/Skyboxes/vz_apocalypse_cubemap_ue.dds"
     },
     "Physics": {
         "LayerCollision": []
@@ -474,7 +173,7 @@
             "Name": "Sprite Render System"
         },
         {
-            "Group": 0,
+            "Group": 3,
             "Name": "Text Render System"
         },
         {
@@ -483,35 +182,11 @@
         },
         {
             "Group": 1,
-            "Name": "EnemySpawnSystem"
+            "Name": "TitleSystem"
         },
         {
             "Group": 0,
             "Name": "GeometricRenderSystem"
-        },
-        {
-            "Group": 1,
-            "Name": "PlayerActionSystem"
-        },
-        {
-            "Group": 1,
-            "Name": "TimeManagerSystem"
-        },
-        {
-            "Group": 1,
-            "Name": "PlayerMoveSystem"
-        },
-        {
-            "Group": 1,
-            "Name": "BulletSystem"
-        },
-        {
-            "Group": 1,
-            "Name": "CameraFollowSystem"
-        },
-        {
-            "Group": 1,
-            "Name": "DamageSystem"
         }
     ]
 }

@@ -1,11 +1,11 @@
 {
     "Camera": {
-        "pitch": 7.084952354431152,
-        "x": 27.831523895263672,
-        "y": 36.14975357055664,
-        "yaw": -13.144919395446777,
-        "z": -38.47320556640625
+        "pitch": 6.819913387298584,
+        "x": -3.604332447052002,
+        "y": 2.556633710861206,
+        "yaw": -10.419881820678711,
+        "z": 2.33931827545166
     },
-    "ContentBrowserPath": "C:\\HAL\\DX22\\DirectX11_3DGAME\\Resources\\Game\\Prefabs",
-    "LastScene": "Resources/Game/Scenes/GameScene.json"
+    "ContentBrowserPath": "C:\\HAL\\2\\DX22_3D\\Resources\\Game\\Scenes",
+    "LastScene": "C:\\HAL\\2\\DX22_3D\\Resources\\Game\\Scenes\\GameScene.json"
 }

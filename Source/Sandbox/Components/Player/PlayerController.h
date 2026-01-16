@@ -30,6 +30,11 @@ namespace Arche {
 		XMFLOAT3 moveDirection = { 0, 0, 1 };	// 慣性方向
 		bool isDrifting = false;
 
+		// フォーカスシステム用
+		Entity focusTarget = NullEntity;	// 現在狙っている敵
+		float focusRange = 20.0f;			// ロックオン距離
+		float focusAngle = 60.0f;			// ロックオン角度
+
 		PlayerController() = default;
 	};
 
@@ -37,6 +42,8 @@ namespace Arche {
 		REFLECT_VAR(state)
 		REFLECT_VAR(dashSpeed)
 		REFLECT_VAR(moveDirection)
+		REFLECT_VAR(focusRange)
+		REFLECT_VAR(focusAngle)
 	)
 }
 

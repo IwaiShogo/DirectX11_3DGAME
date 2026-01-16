@@ -914,6 +914,7 @@ namespace Arche
 		Always = 0,			// 描画、入力、エディタUIなど（常に動く）
 		PlayOnly = 1,		// 物理、ゲームロジック、寿命管理など（Play時のみ）
 		EditOnly = 2,		// エディタ専用ギズモなど
+		Overlay = 3,		// 最前面描画用
 	};
 
 	class ISystem
@@ -1010,6 +1011,7 @@ namespace Arche
 				case SystemGroup::PlayOnly: shouldRun = (state == EditorState::Play); break;
 				case SystemGroup::EditOnly: shouldRun = (state == EditorState::Edit); break;
 				case SystemGroup::Unspecified: shouldRun = (state == EditorState::Play); break;
+				case SystemGroup::Overlay:  shouldRun = true; break;
 				}
 
 				if (!shouldRun) continue;
@@ -1029,9 +1031,30 @@ namespace Arche
 		// 全システムのRenderを実行
 		void Render(const Context& context)
 		{
+			// 1. 通常の描画
 			for (auto& sys : systems)
 			{
 				if (!sys->m_isEnabled) continue;
+
+				if (sys->m_group == SystemGroup::Overlay) continue;
+
+				// 計測開始
+				auto start = std::chrono::high_resolution_clock::now();
+
+				sys->Render(registry, context);
+
+				// 計測終了
+				auto end = std::chrono::high_resolution_clock::now();
+				std::chrono::duration<double, std::milli> ms = end - start;
+				sys->m_lastExecutionTime += ms.count();
+			}
+
+			// 2. オーバーレイ描画
+			for (auto& sys : systems)
+			{
+				if (!sys->m_isEnabled) continue;
+
+				if (sys->m_group != SystemGroup::Overlay) continue;
 
 				// 計測開始
 				auto start = std::chrono::high_resolution_clock::now();

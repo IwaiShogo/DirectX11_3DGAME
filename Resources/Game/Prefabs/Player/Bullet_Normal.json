@@ -1,7 +1,7 @@
 {
     "Bullet": {
         "Enabled": true,
-        "damage": 1.0,
+        "damage": 5.0,
         "ownerTag": "Player",
         "speed": 20.0
     },

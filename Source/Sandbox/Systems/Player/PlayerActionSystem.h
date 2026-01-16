@@ -44,7 +44,7 @@ namespace Arche
 						ctrl.actionTimer = 0.0f;
 						
 						// 弾の発射処理
-						Shoot(registry, trans);
+						Shoot(registry, trans, ctrl);
 					}
 				}
 
@@ -64,19 +64,54 @@ namespace Arche
 		}
 
 	private:
-		void Shoot(Registry& reg, const Transform& playerTrans)
+		void Shoot(Registry& reg, const Transform& playerTrans, const PlayerController& ctrl) // 引数にctrl追加
 		{
-			// プレイヤーの少し前方に弾を出す
-			XMMATRIX playerWorld = playerTrans.GetWorldMatrix();
-			XMVECTOR spawnPos = XMVector3TransformCoord(XMVectorSet(0, 0.0f, 1.0f, 1.0f), playerWorld);
-
+			XMMATRIX world = playerTrans.GetWorldMatrix();
+			XMVECTOR spawnPos = XMVector3TransformCoord(XMVectorSet(0, 0.0f, 1.0f, 1.0f), world);
 			XMFLOAT3 pos;
 			XMStoreFloat3(&pos, spawnPos);
 
-			// プレイヤーと同じ向きで生成
-			Entity bullet = PrefabManager::Instance().Spawn(reg, "Bullet_Normal", pos, playerTrans.rotation);
+			// 発射方向の決定
+			XMVECTOR shootDir;
+			XMMATRIX shootRot;
 
-			if (bullet != NullEntity)
+			// ターゲットがいる場合、そちらを向く
+			if (reg.valid(ctrl.focusTarget) && reg.has<Transform>(ctrl.focusTarget))
+			{
+				XMVECTOR targetPos = XMLoadFloat3(&reg.get<Transform>(ctrl.focusTarget).position);
+				// 偏差射撃(相手の移動先予測)は一旦無しで、相手の中心を狙う
+				targetPos = XMVectorSetY(targetPos, pos.y); // 高さは水平補正（弾が重力落下しないなら）
+
+				XMVECTOR dir = XMVector3Normalize(targetPos - XMLoadFloat3(&pos));
+
+				// 方向ベクトルから回転行列（LookAtの逆）を作成
+				// 簡易的に atan2 で Y軸回転のみ計算（水平射撃）
+				float angle = atan2f(dir.m128_f32[0], dir.m128_f32[2]);
+				shootRot = XMMatrixRotationY(angle);
+			}
+			else
+			{
+				// 通常：プレイヤーの向き
+				shootRot = XMMatrixRotationRollPitchYaw(
+					XMConvertToRadians(playerTrans.rotation.x),
+					XMConvertToRadians(playerTrans.rotation.y),
+					0.0f);
+			}
+
+			// プレファブ生成
+			XMFLOAT3 spawnRot = playerTrans.rotation;
+			if (reg.valid(ctrl.focusTarget))
+			{
+				// ターゲット方向の角度を計算して代入
+				XMVECTOR targetPos = XMLoadFloat3(&reg.get<Transform>(ctrl.focusTarget).position);
+				XMVECTOR dir = targetPos - spawnPos;
+				spawnRot.y = XMConvertToDegrees(atan2f(dir.m128_f32[0], dir.m128_f32[2]));
+				spawnRot.x = 0.0f; // 水平発射
+			}
+
+			Entity b = PrefabManager::Instance().Spawn(reg, "Bullet_Normal", pos, spawnRot);
+
+			if (b != NullEntity)
 			{
 				Logger::Log("Bang!");
 			}

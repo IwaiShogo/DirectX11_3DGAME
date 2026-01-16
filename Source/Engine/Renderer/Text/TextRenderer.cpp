@@ -65,18 +65,29 @@ namespace Arche
 	{
 		// RTVが指定されていない場合、現在バインドされている物を取得
 		ComPtr<ID3D11RenderTargetView> currentRTV;
+		ComPtr<ID3D11DepthStencilView> currentDSV;
 		if (!rtv)
 		{
-			ComPtr<ID3D11DepthStencilView> dsv;
-			s_context->OMGetRenderTargets(1, currentRTV.GetAddressOf(), dsv.GetAddressOf());
+			s_context->OMGetRenderTargets(1, currentRTV.GetAddressOf(), currentDSV.GetAddressOf());
 			rtv = currentRTV.Get();
 		}
-
+		else
+		{
+			// rtvが引数で渡された場合も、現在バインドされているDSVを取得しておく必要がある
+			ComPtr<ID3D11RenderTargetView> tempRTV;
+			s_context->OMGetRenderTargets(1, tempRTV.GetAddressOf(), currentDSV.GetAddressOf());
+		}
 		if (!rtv) return;
+
+		s_context->OMSetRenderTargets(1, &rtv, nullptr);
 
 		// D2Dレンダーターゲット取得
 		ID2D1RenderTarget* d2dRT = GetD2DRenderTarget(rtv);
-		if (!d2dRT) return;
+		if (!d2dRT)
+		{
+			s_context->OMSetRenderTargets(1, &rtv, currentDSV.Get());
+			return;
+		}
 
 		// --------------------------------------------------------
 		// 描画開始
@@ -103,6 +114,13 @@ namespace Arche
 		vp.MaxDepth = 1.0f;
 		vp.TopLeftX = 0;
 		vp.TopLeftY = 0;
+
+		static bool s_logVP = false;
+		if (!s_logVP)
+		{
+			Logger::Log("TextRenderer Viewport: " + std::to_string(vp.Width) + " x " + std::to_string(vp.Height));
+			s_logVP = true;
+		}
 
 		// --------------------------------------------------------
 		// ECSループ
@@ -154,28 +172,31 @@ namespace Arche
 					auto& t3d = registry.get<Transform>(e);
 					XMVECTOR worldPos = XMLoadFloat3(&t3d.position);
 
-					// 必要なら3D空間オフセットを加算 (text.offsetを3Dオフセットとして扱う場合)
-					// worldPos = XMVectorAdd(worldPos, XMVectorSet(text.offset.x, text.offset.y, 0, 0));
+					XMVECTOR viewPos = XMVector3TransformCoord(worldPos, view);
+					float depth = XMVectorGetZ(viewPos);
 
-					// 3D座標 -> スクリーン座標 への変換
-					// vp.Width/Height が実際のRTサイズなので、戻り値は実際のピクセル座標
 					XMVECTOR screenPos = XMVector3Project(worldPos, 0, 0, vp.Width, vp.Height, 0, 1, projection, view, XMMatrixIdentity());
 
 					// カメラの後ろにある場合は描画しない
-					float depth = XMVectorGetZ(screenPos);
-					if (depth < 0.0f || depth > 1.0f)
+					if (depth < 0.0f || XMVectorGetZ(screenPos) > 1.0f)
 					{
 						shouldDraw = false;
 					}
 					else
 					{
-						// スクリーン座標を取得 (Direct2Dと同じ左上原点)
+						// 3. 距離に応じたスケール計算
+						float referenceDist = 15.0f;
+						float scale = referenceDist / depth;
+
+						// 極端に大きくなりすぎないよう制限
+						if (scale > 3.0f) scale = 3.0f;
+
 						float x = XMVectorGetX(screenPos);
 						float y = XMVectorGetY(screenPos);
 
-						// 配置 (2Dオフセットがある場合はピクセル単位でずらす)
-						// ※3D投影は既に実サイズなので scaleToViewport は掛けない
-						finalMat = D2D1::Matrix3x2F::Translation(x + text.offset.x, y + text.offset.y);
+						// 4. 行列作成: スケール -> 平行移動
+						finalMat = D2D1::Matrix3x2F::Scale(scale, scale)
+							* D2D1::Matrix3x2F::Translation(x + text.offset.x, y + text.offset.y);
 					}
 				}
 				// =================================================================
@@ -249,6 +270,8 @@ namespace Arche
 		// 変換行列をリセット
 		d2dRT->SetTransform(D2D1::Matrix3x2F::Identity());
 		d2dRT->EndDraw();
+
+		s_context->OMSetRenderTargets(1, &rtv, currentDSV.Get());
 	}
 
 	ID2D1RenderTarget* TextRenderer::GetD2DRenderTarget(ID3D11RenderTargetView* rtv)
@@ -262,8 +285,12 @@ namespace Arche
 		if (!resource) return nullptr;
 
 		ComPtr<IDXGISurface> surface;
-		resource.As(&surface);
-		if (!surface) return nullptr;
+		HRESULT hr = resource.As(&surface); // QueryInterface
+		if (FAILED(hr) || !surface)
+		{
+			Logger::Log("TextRenderer Error: RTV Resource is not a DXGI Surface! HR=" + std::to_string(hr));
+			return nullptr;
+		}
 
 		D2D1_RENDER_TARGET_PROPERTIES props =
 			D2D1::RenderTargetProperties(
@@ -273,7 +300,7 @@ namespace Arche
 			);
 
 		ComPtr<ID2D1RenderTarget> target;
-		HRESULT hr = FontManager::Instance().GetD2DFactory()->CreateDxgiSurfaceRenderTarget(
+		hr = FontManager::Instance().GetD2DFactory()->CreateDxgiSurfaceRenderTarget(
 			surface.Get(),
 			&props,
 			&target
@@ -284,6 +311,10 @@ namespace Arche
 			target->SetDpi(96.0f, 96.0f);
 			s_d2dTargets[rtv] = target;
 			return target.Get();
+		}
+		else
+		{
+			Logger::Log("TextRenderer Error: CreateDxgiSurfaceRenderTarget failed! HR=" + std::to_string(hr));
 		}
 		return nullptr;
 	}

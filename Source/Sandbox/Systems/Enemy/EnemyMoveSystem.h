@@ -12,35 +12,27 @@ namespace Arche
 	class EnemyMoveSystem : public ISystem
 	{
 	public:
-		EnemyMoveSystem()
-		{
-			m_systemName = "EnemyMoveSystem";
-		}
+		EnemyMoveSystem() { m_systemName = "EnemyMoveSystem"; }
 
 		void Update(Registry& registry) override
 		{
 			float dt = Time::DeltaTime();
+			float time = Time::TotalTime();
 
-			// 1. プレイヤーの位置を探す
+			// 1. プレイヤー位置取得
 			XMVECTOR playerPos = XMVectorZero();
 			bool playerFound = false;
-
-			// Tagで検索
 			auto tagView = registry.view<Tag, Transform>();
-			for (auto e : tagView)
-			{
-				if (tagView.get<Tag>(e).tag == "Player")
-				{
+			for (auto e : tagView) {
+				if (tagView.get<Tag>(e).tag == "Player") {
 					playerPos = XMLoadFloat3(&tagView.get<Transform>(e).position);
 					playerFound = true;
 					break;
 				}
 			}
-
-			// プレイヤーがいなければ何もしない（Game Over時など）
 			if (!playerFound) return;
 
-			// 2. 全ての敵を移動させる
+			// 2. 敵の移動ロジック
 			auto view = registry.view<EnemyStats, Transform, Rigidbody>();
 			for (auto entity : view)
 			{
@@ -49,41 +41,68 @@ namespace Arche
 				auto& rb = view.get<Rigidbody>(entity);
 
 				XMVECTOR enemyPos = XMLoadFloat3(&trans.position);
+				XMVECTOR toPlayer = playerPos - enemyPos;
+				float distSq = XMVectorGetX(XMVector3LengthSq(toPlayer));
+				float dist = sqrtf(distSq);
 
-				// 方向ベクトル計算 (Player - Enemy)
-				XMVECTOR dir = playerPos - enemyPos;
+				XMVECTOR desiredVel = XMVectorZero();
 
-				// Y軸（高さ）の差は無視して水平移動させる
-				dir = XMVectorSetY(dir, 0.0f);
-
-				// 距離の二乗（近すぎたら止まるなどの判定用）
-				float distSq = XMVectorGetX(XMVector3LengthSq(dir));
-
-				// 0.5m以上離れていたら追いかける
-				if (distSq > 0.25f)
+				// タイプ別AI
+				if (stats.type == EnemyType::Zako_Speed)
 				{
-					dir = XMVector3Normalize(dir);
+					// 高速突撃: 偏差射撃のように未来位置を狙う（簡易的にそのまま突っ込む）
+					desiredVel = XMVector3Normalize(toPlayer) * stats.speed;
+				}
+				else if (stats.type == EnemyType::Boss_Omega || stats.type == EnemyType::Boss_Prism)
+				{
+					// 固定砲台/要塞タイプ: ゆっくり近づくが、近づきすぎない
+					float targetDist = 15.0f;
+					if (dist > targetDist) {
+						desiredVel = XMVector3Normalize(toPlayer) * (stats.speed * 0.5f);
+					}
+					else if (dist < targetDist - 2.0f) {
+						// 近すぎたら少し下がる
+						desiredVel = XMVector3Normalize(toPlayer) * -1.0f;
+					}
 
-					// 移動 (Velocity更新)
-					XMVECTOR velocity = dir * stats.moveSpeed;
-
-					// Y軸の速度（重力）は維持する
-					velocity = XMVectorSetY(velocity, rb.velocity.y);
-
-					XMStoreFloat3(&rb.velocity, velocity);
-
-					// 回転 (LookAt)
-					// 進行方向を向く
-					float targetAngle = XMConvertToDegrees(atan2f(rb.velocity.x, rb.velocity.z));
-
-					// 現在角度からスムーズに補間しても良いが、今回は即時反映
-					trans.rotation.y = targetAngle;
+					// ゆっくり回転 (威厳)
+					trans.rotation.y += dt * 10.0f;
+				}
+				else if (stats.type == EnemyType::Boss_Carrier)
+				{
+					// 空母タイプ: プレイヤーの周りを旋回
+					XMVECTOR dir = XMVector3Normalize(toPlayer);
+					// 右ベクトル (Y軸回転)
+					XMVECTOR orbitDir = XMVectorSet(dir.m128_f32[2], 0, -dir.m128_f32[0], 0);
+					desiredVel = orbitDir * stats.speed + (dir * 0.5f); // 旋回しつつ少し寄る
 				}
 				else
 				{
-					// 到着したら停止
-					rb.velocity.x = 0.0f;
-					rb.velocity.z = 0.0f;
+					// デフォルト (Zako_Cube, Boss_Tank等): 単純追跡
+					if (dist > 0.5f) {
+						desiredVel = XMVector3Normalize(toPlayer) * stats.speed;
+					}
+				}
+
+				// Y軸（重力）維持
+				desiredVel = XMVectorSetY(desiredVel, rb.velocity.y);
+
+				// 加速適用 (慣性を持たせるためLerp)
+				XMVECTOR currentVel = XMLoadFloat3(&rb.velocity);
+				XMVECTOR newVel = XMVectorLerp(currentVel, desiredVel, dt * 5.0f);
+				XMStoreFloat3(&rb.velocity, newVel);
+
+				// 回転: 進行方向を向く (ボス以外)
+				if (stats.type != EnemyType::Boss_Omega && stats.type != EnemyType::Boss_Prism)
+				{
+					if (fabs(rb.velocity.x) > 0.1f || fabs(rb.velocity.z) > 0.1f) {
+						float targetAngle = XMConvertToDegrees(atan2f(rb.velocity.x, rb.velocity.z));
+						// 角度補間
+						float currentAngle = trans.rotation.y;
+						float diff = targetAngle - currentAngle;
+						// 180度またぎ処理省略 (簡易版)
+						trans.rotation.y = std::lerp(currentAngle, targetAngle, dt * 10.0f);
+					}
 				}
 			}
 		}

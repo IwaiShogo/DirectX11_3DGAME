@@ -179,8 +179,34 @@ namespace Arche
 
 				// 3. Group
 				ImGui::TableSetColumnIndex(2);
-				const char* gName = (sys->m_group == SystemGroup::Always) ? "Always" : (sys->m_group == SystemGroup::PlayOnly ? "Play" : "Edit");
-				ImVec4 gCol = (sys->m_group == SystemGroup::Always) ? ImVec4(0.6f, 0.8f, 1.0f, 1.0f) : ImVec4(0.6f, 1.0f, 0.6f, 1.0f);
+
+				const char* gName = "Unknown";
+				ImVec4 gCol = ImVec4(0.8f, 0.8f, 0.8f, 1.0f); // デフォルト (グレー)
+
+				switch (sys->m_group)
+				{
+				case SystemGroup::Always:
+					gName = "Always";
+					gCol = ImVec4(0.6f, 0.8f, 1.0f, 1.0f); // 水色
+					break;
+				case SystemGroup::PlayOnly:
+					gName = "Play";
+					gCol = ImVec4(0.6f, 1.0f, 0.6f, 1.0f); // 緑
+					break;
+				case SystemGroup::EditOnly:
+					gName = "Edit";
+					gCol = ImVec4(1.0f, 0.8f, 0.6f, 1.0f); // オレンジ
+					break;
+				case SystemGroup::Overlay:
+					gName = "Overlay";
+					gCol = ImVec4(1.0f, 0.4f, 1.0f, 1.0f); // マゼンタ (最前面として目立たせる)
+					break;
+				case SystemGroup::Unspecified:
+					gName = "Unspec";
+					gCol = ImVec4(0.5f, 0.5f, 0.5f, 1.0f); // 暗いグレー
+					break;
+				}
+
 				ImGui::TextColored(gCol, gName);
 
 				// 4. Time & Gauge

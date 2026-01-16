@@ -40,31 +40,6 @@
             }
         },
         {
-            "Camera": {
-                "Enabled": true,
-                "aspect": 1.7777777910232544,
-                "farZ": 1000.0,
-                "fov": 0.7853981852531433,
-                "nearZ": 0.10000000149011612
-            },
-            "Collider": {
-                "Enabled": true,
-                "boxSize": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "height": 1.0,
-                "isTrigger": false,
-                "layer": 1,
-                "offset": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "radius": 0.5,
-                "type": 3
-            },
             "ID": 2,
             "IsActive": true,
             "Relationship": {
@@ -77,9 +52,7 @@
             "Tag": {
                 "Enabled": true,
                 "componentOrder": [
-                    "Transform",
-                    "Camera",
-                    "Collider"
+                    "Transform"
                 ],
                 "name": "@Camera Root",
                 "tag": "Untagged"
@@ -87,13 +60,13 @@
             "Transform": {
                 "Enabled": true,
                 "position": [
-                    -0.31968021392822266,
-                    1.8767445087432861,
-                    -4.984645366668701
+                    0.0,
+                    0.0,
+                    0.0
                 ],
                 "rotation": [
                     0.0,
-                    -0.0,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -297,15 +270,11 @@
             },
             "ID": 6,
             "IsActive": true,
-            "LifeTimer": {
-                "Enabled": true,
-                "currentTime": 10.0,
-                "isDead": false,
-                "maxTime": 5.0
-            },
             "PlayerController": {
                 "Enabled": true,
                 "dashSpeed": 25.0,
+                "focusAngle": 60.0,
+                "focusRange": 20.0,
                 "moveDirection": [
                     0.0,
                     0.0,
@@ -319,6 +288,13 @@
                 "rotationSpeed": 15.0,
                 "runSpeed": 10.0,
                 "walkSpeed": 5.0
+            },
+            "PlayerTime": {
+                "Enabled": true,
+                "currentTime": 5.0,
+                "invincibilityTimer": 0.0,
+                "isDead": false,
+                "maxTime": 5.0
             },
             "Relationship": {
                 "Enabled": true,
@@ -341,7 +317,9 @@
                     "PlayerController",
                     "PlayerMoveData",
                     "GeometricDesign",
-                    "LifeTimer"
+                    "LifeTimer",
+                    "PlayerStats",
+                    "PlayerTime"
                 ],
                 "name": "Player",
                 "tag": "Player"
@@ -366,6 +344,31 @@
             }
         },
         {
+            "Camera": {
+                "Enabled": true,
+                "aspect": 1.7777777910232544,
+                "farZ": 1000.0,
+                "fov": 0.7853981852531433,
+                "nearZ": 0.10000000149011612
+            },
+            "Collider": {
+                "Enabled": true,
+                "boxSize": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "height": 1.0,
+                "isTrigger": false,
+                "layer": 1,
+                "offset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "radius": 0.5,
+                "type": 0
+            },
             "ID": 7,
             "IsActive": true,
             "Relationship": {
@@ -376,10 +379,12 @@
             "Tag": {
                 "Enabled": true,
                 "componentOrder": [
-                    "Transform"
+                    "Transform",
+                    "Camera",
+                    "Collider"
                 ],
                 "name": "MainCamera",
-                "tag": "Untagged"
+                "tag": "Camera"
             },
             "Transform": {
                 "Enabled": true,
@@ -390,7 +395,7 @@
                 ],
                 "rotation": [
                     0.0,
-                    0.0,
+                    -0.0,
                     0.0
                 ],
                 "scale": [
@@ -429,7 +434,28 @@
         "SkyboxTexture": ""
     },
     "Physics": {
-        "LayerCollision": []
+        "LayerCollision": [
+            {
+                "Layer": 2,
+                "Mask": 62
+            },
+            {
+                "Layer": 4,
+                "Mask": 62
+            },
+            {
+                "Layer": 8,
+                "Mask": 62
+            },
+            {
+                "Layer": 16,
+                "Mask": 62
+            },
+            {
+                "Layer": 32,
+                "Mask": 62
+            }
+        ]
     },
     "SceneName": "Untitled Scene",
     "Systems": [
@@ -474,7 +500,7 @@
             "Name": "Sprite Render System"
         },
         {
-            "Group": 0,
+            "Group": 3,
             "Name": "Text Render System"
         },
         {
@@ -495,10 +521,6 @@
         },
         {
             "Group": 1,
-            "Name": "TimeManagerSystem"
-        },
-        {
-            "Group": 1,
             "Name": "PlayerMoveSystem"
         },
         {
@@ -512,6 +534,34 @@
         {
             "Group": 1,
             "Name": "DamageSystem"
+        },
+        {
+            "Group": 1,
+            "Name": "EnemyMoveSystem"
+        },
+        {
+            "Group": 1,
+            "Name": "SurvivalSystem"
+        },
+        {
+            "Group": 1,
+            "Name": "FloatingTextSystem"
+        },
+        {
+            "Group": 1,
+            "Name": "PlayerFocusSystem"
+        },
+        {
+            "Group": 1,
+            "Name": "EnemyUISystem"
+        },
+        {
+            "Group": 1,
+            "Name": "PlayerHUDSystem"
+        },
+        {
+            "Group": 1,
+            "Name": "GameLifecycleSystem"
         }
     ]
 }

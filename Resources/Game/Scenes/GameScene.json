@@ -179,7 +179,7 @@
                 "Enabled": true,
                 "position": [
                     0.0,
-                    0.0,
+                    -1.0,
                     0.0
                 ],
                 "rotation": [
@@ -273,6 +273,8 @@
             "PlayerController": {
                 "Enabled": true,
                 "dashSpeed": 25.0,
+                "focusAngle": 60.0,
+                "focusRange": 20.0,
                 "moveDirection": [
                     0.0,
                     0.0,
@@ -289,7 +291,7 @@
             },
             "PlayerTime": {
                 "Enabled": true,
-                "currentTime": 100.0,
+                "currentTime": 5.0,
                 "invincibilityTimer": 0.0,
                 "isDead": false,
                 "maxTime": 5.0
@@ -498,16 +500,12 @@
             "Name": "Sprite Render System"
         },
         {
-            "Group": 0,
+            "Group": 3,
             "Name": "Text Render System"
         },
         {
             "Group": 0,
             "Name": "Audio System"
-        },
-        {
-            "Group": 1,
-            "Name": "EnemySpawnSystem"
         },
         {
             "Group": 0,
@@ -544,6 +542,26 @@
         {
             "Group": 1,
             "Name": "FloatingTextSystem"
+        },
+        {
+            "Group": 1,
+            "Name": "PlayerFocusSystem"
+        },
+        {
+            "Group": 1,
+            "Name": "EnemyUISystem"
+        },
+        {
+            "Group": 1,
+            "Name": "PlayerHUDSystem"
+        },
+        {
+            "Group": 1,
+            "Name": "GameDirectorSystem"
+        },
+        {
+            "Group": 1,
+            "Name": "BossSystem"
         }
     ]
 }
