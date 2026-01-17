@@ -76,67 +76,37 @@ namespace Arche
 		}
 
 	private:
-		// ★追加: コライダーのワールド情報を計算してキャッシュする関数
 		void UpdateWorldCollider(Registry& reg, Entity e, const XMMATRIX& worldMat)
 		{
-			const auto& col = reg.get<Collider>(e);
+			if (!reg.has<Collider>(e)) return;
 
-			// WorldColliderコンポーネントがなければ作成、あれば取得
+			// 1. 行列からワールド座標を抽出
+			XMVECTOR worldPosVec = worldMat.r[3];
+
+			// 2. 物理システムが参照している WorldCollider キャッシュを直接更新
 			if (!reg.has<WorldCollider>(e)) {
 				reg.emplace<WorldCollider>(e);
 			}
 			auto& worldCol = reg.get<WorldCollider>(e);
 
-			// --- 行列からスケール・回転・平行移動を抽出 ---
+			// 計算結果を直接キャッシュに叩き込む
+			XMStoreFloat3(&worldCol.center, worldPosVec);
+
+			// OBB用の軸（回転）も同期
 			XMVECTOR scale, rotQuat, trans;
 			XMMatrixDecompose(&scale, &rotQuat, &trans, worldMat);
-			XMFLOAT3 s; XMStoreFloat3(&s, scale);
+			XMMATRIX rotMat = XMMatrixRotationQuaternion(rotQuat);
+			XMFLOAT4X4 m; XMStoreFloat4x4(&m, rotMat);
+			worldCol.axes[0] = { m._11, m._12, m._13 };
+			worldCol.axes[1] = { m._21, m._22, m._23 };
+			worldCol.axes[2] = { m._31, m._32, m._33 };
 
-			// --- センター位置の計算 (オフセット適用) ---
-			// コライダーのローカルオフセットをワールド座標へ変換
-			XMVECTOR offsetVec = XMLoadFloat3(&col.offset);
-			// オフセットにワールド行列を適用することで、親の移動・回転・スケール全てが反映された絶対座標になる
-			XMVECTOR centerVec = XMVector3Transform(offsetVec, worldMat);
-			XMStoreFloat3(&worldCol.center, centerVec);
+			// ★重要: 物理エンジンに「計算済み」であることを伝え、上書きを防ぐ
+			worldCol.isDirty = false;
 
-			// --- 形状情報の更新 ---
-			worldCol.isDirty = false; // 更新済みとする
-
-			// ボックスの場合
-			if (col.type == ColliderType::Box) {
-				// 回転軸の抽出
-				XMMATRIX rotMat = XMMatrixRotationQuaternion(rotQuat);
-				XMFLOAT4X4 rot4x4; XMStoreFloat4x4(&rot4x4, rotMat);
-
-				worldCol.axes[0] = { rot4x4._11, rot4x4._12, rot4x4._13 };
-				worldCol.axes[1] = { rot4x4._21, rot4x4._22, rot4x4._23 };
-				worldCol.axes[2] = { rot4x4._31, rot4x4._32, rot4x4._33 };
-
-				// ハーフサイズ (スケール適用)
-				worldCol.extents = {
-					col.boxSize.x * s.x * 0.5f,
-					col.boxSize.y * s.y * 0.5f,
-					col.boxSize.z * s.z * 0.5f
-				};
-			}
-			// 球の場合
-			else if (col.type == ColliderType::Sphere) {
-				// スケールの最大値を半径に適用
-				float maxScale = std::max({ s.x, s.y, s.z });
-				worldCol.radius = col.radius * maxScale;
-			}
-			// カプセル・円柱の場合
-			else {
-				// 高さ方向(Y)と半径方向(X,Z)のスケール適用
-				float maxRadScale = std::max(s.x, s.z);
-				worldCol.radius = col.radius * maxRadScale;
-				worldCol.height = col.height * s.y;
-
-				// 軸方向（Y軸基準）をワールド回転に合わせて更新
-				XMVECTOR up = XMVector3TransformNormal(XMVectorSet(0, 1, 0, 0), worldMat);
-				up = XMVector3Normalize(up);
-				XMStoreFloat3(&worldCol.axis, up);
-			}
+			// 3. Colliderのoffsetも念のため同期
+			auto& col = reg.get<Collider>(e);
+			XMStoreFloat3(&col.offset, worldPosVec);
 		}
 	};
 

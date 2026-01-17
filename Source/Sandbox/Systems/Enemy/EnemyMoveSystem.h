@@ -90,14 +90,21 @@ namespace Arche
 				XMStoreFloat3(&rb.velocity, newVel);
 
 				// 向き更新 (ボス以外)
-				if (stats.type != EnemyType::Boss_Omega) {
-					if (XMVectorGetX(XMVector3LengthSq(newVel)) > 0.1f) {
-						float targetAng = atan2f(rb.velocity.x, rb.velocity.z);
+				if (stats.type != EnemyType::Boss_Omega && stats.type != EnemyType::Boss_Titan) {
+					if (XMVectorGetX(XMVector3LengthSq(newVel)) > 0.01f) {
+						// atan2f の結果はラジアン
+						float targetAngRad = atan2f(rb.velocity.x, rb.velocity.z);
+						// Transform.rotation.y は度(Degree)として扱われている可能性があるため変換を確認
+						float targetAngDeg = XMConvertToDegrees(targetAngRad);
+
 						float curAng = t.rotation.y;
-						// 角度補間
-						float diff = targetAng - curAng;
-						while (diff < -XM_PI) diff += XM_2PI; while (diff > XM_PI) diff -= XM_2PI;
-						t.rotation.y += diff * dt * 10.0f;
+						float diff = targetAngDeg - curAng;
+
+						// 角度の最短回転補正
+						while (diff < -180.0f) diff += 360.0f;
+						while (diff > 180.0f) diff -= 360.0f;
+
+						t.rotation.y += diff * dt * 5.0f;
 					}
 				}
 			}

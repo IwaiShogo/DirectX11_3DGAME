@@ -57,17 +57,17 @@ namespace Arche
 			Entity b = reg.create();
 
 			XMVECTOR vStart = XMLoadFloat3(&start);
-			vStart += XMVectorSet(0, 1.5f, 0, 0); // 発射位置の高さを少し抑える
+			vStart += XMVectorSet(0, 1.0f, 0, 0); // 少し低めから発射
 
 			XMVECTOR vTarget = XMLoadFloat3(&target);
-			// ★修正: ターゲットの少し下(y+0.5)を狙うように変更
 			vTarget += XMVectorSet(0, 0.5f, 0, 0);
 
 			XMVECTOR vDir = XMVector3Normalize(vTarget - vStart);
 			XMFLOAT3 dir; XMStoreFloat3(&dir, vDir);
 
-			// 発射位置のオフセット (自爆防止)
-			float offsetDistance = 4.0f;
+			// ★修正: オフセット距離を短縮 (4.0f -> 1.5f)
+			// 雑魚敵のコライダー半径(約1.0)より少し外に出れば十分です
+			float offsetDistance = 1.5f;
 			XMVECTOR vSpawnPos = vStart + vDir * offsetDistance;
 			XMFLOAT3 spawnPos; XMStoreFloat3(&spawnPos, vSpawnPos);
 

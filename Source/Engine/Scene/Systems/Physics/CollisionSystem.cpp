@@ -1170,16 +1170,23 @@ namespace Arche
 	// キャッシュ（WorldCollider）の更新処理
 	void CollisionSystem::UpdateWorldCollider(Registry& registry, Entity e, const Transform& t, const Collider& c, WorldCollider& wc) 
 	{
-		// ワールド行列の分解 (Scale, Rotation, Position)
+		// 行列の第4行目（ワールド座標）を直接取得
+		XMMATRIX worldMat = t.GetWorldMatrix();
+		XMVECTOR centerVec = worldMat.r[3];
+
+		// キャッシュに保存
+		XMStoreFloat3(&wc.center, centerVec);
+
+		// AABB計算用の分解
 		XMVECTOR scale, rotQuat, pos;
-		XMMatrixDecompose(&scale, &rotQuat, &pos, t.GetWorldMatrix());
+		XMMatrixDecompose(&scale, &rotQuat, &pos, worldMat);
 		XMFLOAT3 gScale; XMStoreFloat3(&gScale, scale);
 		XMMATRIX rotMat = XMMatrixRotationQuaternion(rotQuat);
 
 		// オフセット込みの中心座標
 		XMVECTOR offsetVec = XMLoadFloat3(&c.offset);
 		offsetVec = XMVectorSetW(offsetVec, 1.0f);
-		XMVECTOR centerVec = XMVector3TransformCoord(offsetVec, t.GetWorldMatrix());
+		//XMVECTOR centerVec = XMVector3TransformCoord(offsetVec, t.GetWorldMatrix());
 
 		// AABB計算用の最小/最大
 		XMVECTOR vMin, vMax;

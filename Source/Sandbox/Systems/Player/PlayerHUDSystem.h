@@ -318,7 +318,13 @@ namespace Arche
 			if (reg.valid(ctx.reticleRoot)) {
 				auto& t = reg.get<Transform>(ctx.reticleRoot);
 				if (target != NullEntity) {
-					XMFLOAT3 tPos = reg.get<Transform>(target).position;
+					auto& targetT = reg.get<Transform>(target);
+					XMMATRIX targetWorld = targetT.GetWorldMatrix();
+					XMVECTOR targetWorldPos = targetWorld.r[3];
+
+					XMFLOAT3 tPos;
+					XMStoreFloat3(&tPos, targetWorldPos);
+
 					t.position.x += (tPos.x - t.position.x) * dt * 20.0f;
 					t.position.y += (tPos.y - t.position.y) * dt * 20.0f;
 					t.position.z += (tPos.z - t.position.z) * dt * 20.0f;
